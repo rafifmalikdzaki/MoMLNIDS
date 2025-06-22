@@ -27,7 +27,7 @@ class MoMLDNIDS(nn.Module):
         self.LabelClassifier = ClassifierANN(
             hidden_nodes[-1],
             num_class,
-            classifier_nodes.clear() if single_layer else classifier_nodes,
+            None if single_layer else classifier_nodes,
         )
 
     def forward(self, x):

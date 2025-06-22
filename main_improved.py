@@ -26,9 +26,10 @@ from sklearn.preprocessing import StandardScaler
 from skripsi_code.config import Config, load_config, get_config
 from skripsi_code.experiment import ExperimentTracker, MetricsLogger
 from skripsi_code.explainability import ModelExplainer, visualize_feature_importance
-from skripsi_code.model import MoMLNIDS
-from skripsi_code.utils import load_dataset, DomainDataset
-from skripsi_code.TrainEval import TrainEval
+from skripsi_code.model.MoMLNIDS import MoMLDNIDS
+from skripsi_code.utils.dataloader import random_split_dataloader
+from skripsi_code.utils.domain_dataset import MultiChunkDataset, MultiChunkParquet
+from skripsi_code.TrainEval.TrainEval import train, eval
 
 # Configure logging
 logging.basicConfig(
@@ -132,14 +133,13 @@ def create_model(config: Config, n_features: int) -> nn.Module:
     model_config = config.model
     
     # Create model based on configuration
-    model = MoMLNIDS(
-        input_size=n_features,
-        fe_hidden_sizes=model_config['feature_extractor']['hidden_sizes'],
-        classifier_hidden_sizes=model_config['classifier']['hidden_sizes'],
-        discriminator_hidden_sizes=model_config['discriminator']['hidden_sizes'],
-        num_classes=model_config['classifier']['num_classes'],
+    model = MoMLDNIDS(
+        input_nodes=n_features,
+        hidden_nodes=model_config['feature_extractor']['hidden_layers'],
+        classifier_nodes=model_config['classifier']['hidden_layers'],
         num_domains=model_config['discriminator']['num_domains'],
-        dropout=model_config['feature_extractor']['dropout']
+        num_class=model_config['classifier']['num_classes'],
+        single_layer=True
     )
     
     logger.info(f"Created model: {model_config['name']}")
@@ -154,17 +154,13 @@ def train_model(model: nn.Module,
     logger.info("Starting model training...")
     
     device = setup_device(config)
-    model = model.to(device)
+    model = model.to(device).double()  # Set to double precision to match TrainEval
     
-    # Initialize trainer
-    trainer = TrainEval(
-        model=model,
-        device=device,
-        config=config
-    )
+    # Create dummy data loaders for demonstration
+    # In a real implementation, you would use the actual data loading functions
+    from torch.utils.data import DataLoader, TensorDataset
     
     # Prepare combined dataset for multi-domain training
-    # This is a simplified version - you'll need to adapt based on your actual data structure
     all_train_data = []
     all_train_labels = []
     domain_labels = []
@@ -178,13 +174,53 @@ def train_model(model: nn.Module,
     y_train_combined = np.hstack(all_train_labels)
     domain_labels = np.array(domain_labels)
     
-    # Training loop with experiment tracking
-    training_results = trainer.train(
-        X_train_combined, 
-        y_train_combined, 
-        domain_labels,
-        experiment_tracker=experiment_tracker
+    # Create data loaders
+    train_dataset = TensorDataset(
+        torch.tensor(X_train_combined, dtype=torch.float64),
+        torch.tensor(y_train_combined, dtype=torch.long),
+        torch.tensor(domain_labels, dtype=torch.long)
     )
+    train_loader = DataLoader(train_dataset, batch_size=config.training['batch_size'], shuffle=True)
+    
+    # Setup optimizers
+    optimizer = torch.optim.Adam(model.parameters(), lr=config.training['learning_rate'])
+    optimizers = [optimizer]
+    
+    # Training loop with experiment tracking
+    training_results = {}
+    epochs = config.training['epochs']
+    
+    # Create logs directory
+    logs_dir = Path(config.output.get('logs_dir', 'logs'))
+    logs_dir.mkdir(parents=True, exist_ok=True)
+    log_file = logs_dir / 'training.log'
+    
+    logger.info(f"Training for {epochs} epochs...")
+    
+    for epoch in range(1, epochs + 1):
+        # Train for one epoch
+        model, optimizers = train(
+            model=model,
+            train_data=train_loader,
+            optimizers=optimizers,
+            device=device,
+            epoch=epoch,
+            num_epoch=epochs,
+            filename=str(log_file),
+            label_smooth=0.0  # Add label smoothing parameter
+        )
+        
+        # Log metrics to wandb
+        experiment_tracker.log_metrics({
+            'epoch': epoch,
+            'training_progress': epoch / epochs
+        })
+        
+        if epoch % 5 == 0:
+            logger.info(f"Completed epoch {epoch}/{epochs}")
+    
+    training_results['epochs_completed'] = epochs
+    training_results['final_model'] = model
     
     logger.info("Training completed")
     return training_results
@@ -205,17 +241,13 @@ def evaluate_model(model: nn.Module,
     for dataset_name, data in datasets.items():
         logger.info(f"Evaluating on {dataset_name}")
         
-        X_test = torch.tensor(data['X_test'], dtype=torch.float32, device=device)
+        X_test = torch.tensor(data['X_test'], dtype=torch.float64, device=device)
         y_test = data['y_test']
         
         with torch.no_grad():
-            outputs = model(X_test)
-            if outputs.dim() > 1:
-                y_pred = outputs.argmax(dim=1).cpu().numpy()
-                y_prob = torch.softmax(outputs, dim=1).cpu().numpy()
-            else:
-                y_pred = (torch.sigmoid(outputs) > 0.5).cpu().numpy().astype(int)
-                y_prob = torch.sigmoid(outputs).cpu().numpy()
+            outputs_class, outputs_domain = model(X_test)  # Model returns tuple
+            y_pred = outputs_class.argmax(dim=1).cpu().numpy()
+            y_prob = torch.softmax(outputs_class, dim=1).cpu().numpy()
         
         # Log performance metrics
         metrics = experiment_tracker.log_model_performance(
@@ -252,11 +284,25 @@ def explain_model(model: nn.Module,
     # Create feature names (replace with actual feature names)
     feature_names = [f"feature_{i}" for i in range(datasets[list(datasets.keys())[0]]['n_features'])]
     
-    explainer = ModelExplainer(model, feature_names)
+    # Create a wrapper to handle type conversion
+    class ModelWrapper(nn.Module):
+        def __init__(self, model):
+            super().__init__()
+            self.model = model
+        
+        def forward(self, x):
+            # Convert to double precision for the model
+            if x.dtype != torch.float64:
+                x = x.double()
+            outputs_class, outputs_domain = self.model(x)
+            return outputs_class  # Return only classification output for explainer
+    
+    wrapped_model = ModelWrapper(model)
+    explainer = ModelExplainer(wrapped_model, feature_names)
     
     # Take first dataset for demonstration
     first_dataset = list(datasets.values())[0]
-    X_sample = first_dataset['X_test'][:100]  # Sample for explanation
+    X_sample = first_dataset['X_test'][:100].astype(np.float32)  # Sample for explanation, ensure float32
     
     # Global feature importance
     logger.info("Computing global feature importance...")
@@ -414,7 +460,11 @@ def main():
         logger.info("=== Experiment Summary ===")
         for dataset_name, results in evaluation_results.items():
             metrics = results['metrics']
-            logger.info(f"{dataset_name} - Accuracy: {metrics.get('accuracy', 'N/A'):.4f}")
+            accuracy = metrics.get('accuracy', 'N/A')
+            if isinstance(accuracy, (int, float)):
+                logger.info(f"{dataset_name} - Accuracy: {accuracy:.4f}")
+            else:
+                logger.info(f"{dataset_name} - Accuracy: {accuracy}")
         
         logger.info("Training completed successfully!")
         

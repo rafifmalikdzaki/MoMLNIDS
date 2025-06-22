@@ -16,13 +16,12 @@ class ClassifierANN(nn.Module):
 
         self.input_nodes: int = input_nodes
         self.output_nodes: int = num_class
-        self.hidden_nodes: List[int] = [self.input_nodes] + (
-            hidden_nodes if hidden_nodes else [10] * 3
-        )
-
+        
         self.fc_modules: nn.ModuleList = nn.ModuleList()
-
+        
         if hidden_nodes:
+            # Use provided hidden layers
+            self.hidden_nodes: List[int] = [self.input_nodes] + hidden_nodes
             self.hidden_layers: int = len(hidden_nodes)
 
             for i in range(self.hidden_layers):
@@ -34,9 +33,13 @@ class ClassifierANN(nn.Module):
                         nn.Dropout(0.25),
                     )
                 )
+            final_layer_input = self.hidden_nodes[-1]
+        else:
+            # No hidden layers - direct connection from input to output
+            final_layer_input = self.input_nodes
 
         self.output_layer = nn.Sequential(
-            nn.Linear(self.hidden_nodes[-1], self.output_nodes)
+            nn.Linear(final_layer_input, self.output_nodes)
         )
 
     def forward(self, x: Tensor) -> Tensor:

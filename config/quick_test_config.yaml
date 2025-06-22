@@ -17,19 +17,19 @@ wandb:
 model:
   name: "MoMLNIDS"
   feature_extractor:
-    hidden_sizes: [64, 32]  # Smaller network
-    dropout: 0.2
-    activation: "relu"
+    hidden_layers: [64, 32]  # Smaller network
+    dropout_rate: 0.2
+    activation: "ELU"
     
   classifier:
-    hidden_sizes: [32, 16]  # Smaller classifier
+    hidden_layers: [16]  # Single hidden layer, input comes from feature extractor (32)
     num_classes: 2
-    dropout: 0.1
+    dropout_rate: 0.1
     
   discriminator:
-    hidden_sizes: [32, 16]  # Smaller discriminator
+    hidden_layers: [32, 16]  # Smaller discriminator
     num_domains: 4
-    dropout: 0.1
+    dropout_rate: 0.1
 
 # Training configuration (faster training)
 training:
