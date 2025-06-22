@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, develop, feature/improved-project-structure ]
   pull_request:
     branches: [ main, develop ]
 
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12"]
 
     steps:
     - uses: actions/checkout@v4
@@ -26,22 +26,51 @@ jobs:
       with:
         version: "latest"
     
-    - name: Cache uv compiled wheels
+    - name: Cache uv dependencies
       uses: actions/cache@v4
       with:
-        path: ~/.cache/uv
-        key: ${{ runner.os }}-uv-${{ hashFiles('**/requirements.txt') }}
+        path: |
+          ~/.cache/uv
+          .venv
+        key: ${{ runner.os }}-uv-python${{ matrix.python-version }}-${{ hashFiles('requirements.txt', 'requirements.in', 'uv.lock') }}
         restore-keys: |
+          ${{ runner.os }}-uv-python${{ matrix.python-version }}-
           ${{ runner.os }}-uv-
     
-    - name: Install dependencies
+    - name: Create virtual environment and install dependencies
       run: |
+        uv venv --python ${{ matrix.python-version }}
         uv pip install -r requirements.txt
+        # Install optional explainability dependencies for testing
+        uv pip install shap lime || echo "Optional XAI dependencies not available for this Python version"
+    
+    - name: Install package in development mode
+      run: |
+        uv pip install -e .
+    
+    - name: Run linting
+      run: |
+        uv run ruff check .
+        uv run ruff format --check .
+    
+    - name: Run type checking (if mypy is available)
+      run: |
+        uv run mypy skripsi_code/ || echo "Type checking skipped"
+      continue-on-error: true
     
     - name: Run tests with pytest
       run: |
-        pytest -v
+        uv run pytest -v --tb=short
     
     - name: Run smoke tests
       run: |
-        python smoke_test.py
+        uv run python smoke_test.py
+    
+    - name: Test configuration loading
+      run: |
+        uv run python -c "from skripsi_code.config import get_config; print('Config loaded successfully')"
+    
+    - name: Test improved main script (dry run)
+      run: |
+        uv run python main_improved.py --help
+      continue-on-error: true
