@@ -1,16 +1,27 @@
-# MoMLDNIDS: Multi-Domain Network Intrusion Detection with Pseudo-Labeling and Clustering
+# 🛡️ MoMLDNIDS: Multi-Domain Network Intrusion Detection with Pseudo-Labeling and Clustering
 
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-orange.svg)](https://pytorch.org/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![CI](https://github.com/rafifmalikdzaki/DomainGeneralizationSkripsi/actions/workflows/ci.yml/badge.svg)](https://github.com/rafifmalikdzaki/DomainGeneralizationSkripsi/actions)
+[![Weights & Biases](https://img.shields.io/badge/MLOps-Weights%20%26%20Biases-yellow.svg)](https://wandb.ai/)
 
-## Overview & Research Motivation
+## 🔬 Overview & Research Motivation
 
-Network Intrusion Detection Systems (NIDS) face significant challenges when deploying across different network domains due to domain shift and limited labeled data availability. This project implements **MoMLDNIDS** (Multi-Domain Machine Learning Domain Network Intrusion Detection System), a novel approach that addresses cross-domain NIDS deployment through:
+Network Intrusion Detection Systems (NIDS) face significant challenges when deploying across different network domains due to domain shift and limited labeled data availability. This project implements **MoMLDNIDS** (Multi-Domain Machine Learning Domain Network Intrusion Detection System), a cutting-edge research platform that addresses cross-domain NIDS deployment through:
 
-- **Cross-Domain Adaptation**: Leveraging domain adversarial training with Gradient Reversal Layer (GRL) to learn domain-invariant features
-- **Pseudo-Labeling with Clustering**: Using unsupervised clustering to generate pseudo-domain labels for improved domain adaptation
-- **Multi-Domain Learning**: Training on multiple source domains to enhance generalization to unseen target domains
+🎯 **Core Innovations:**
+- 🔄 **Cross-Domain Adaptation**: Leveraging domain adversarial training with Gradient Reversal Layer (GRL) to learn domain-invariant features
+- 🏷️ **Pseudo-Labeling with Clustering**: Using unsupervised clustering to generate pseudo-domain labels for improved domain adaptation
+- 🌐 **Multi-Domain Learning**: Training on multiple source domains to enhance generalization to unseen target domains
+- 📊 **MLOps Integration**: Complete experiment tracking, configuration management, and explainable AI capabilities
+
+✨ **Modern ML Research Features:**
+- 📈 **Experiment Tracking**: Weights & Biases integration for comprehensive experiment management
+- ⚙️ **Configuration Management**: YAML-based configuration system with validation
+- 🔍 **Explainable AI**: Multiple interpretability methods (SHAP, LIME, Integrated Gradients)
+- 🔄 **Reproducible Research**: Automated environment management and deterministic training
+- 🚀 **CI/CD Pipeline**: Automated testing and validation workflows
 
 The core innovation lies in the combination of adversarial domain adaptation with clustering-based pseudo-labeling, enabling effective knowledge transfer between network domains while maintaining high intrusion detection accuracy.
 
@@ -97,100 +108,196 @@ uv pip install -r requirements-gpu.txt  # if available
 pip install -r requirements.txt
 ```
 
-## Usage Examples
+## 🚀 Usage Examples
 
-### 1. Source-Only Baseline Training
+### 1. 🎯 Enhanced Training with MLOps
 
-Train the model using only source domain data without domain adaptation:
+Run the improved training script with full configuration management and experiment tracking:
 
+```bash
+# Run with default configuration
+python main_improved.py
+
+# Run with custom config file
+python main_improved.py --config config/custom_config.yaml
+
+# Run quick test with minimal setup
+python main_improved.py --config config/quick_test_config.yaml
+```
+
+✨ **Enhanced Features:**
+- 📈 **Automatic Experiment Tracking**: Weights & Biases integration
+- 🔍 **Explainable AI**: Generate model interpretations automatically
+- 💾 **Model Versioning**: Save best models with metadata
+- 🔧 **Reproducible Results**: Deterministic training with seed management
+
+### 2. 🔄 Legacy Training Methods
+
+#### Source-Only Baseline Training
 ```bash
 python main.py
 ```
 
-This will:
-- Train on 2 source domains, test on 1 target domain (rotating through all domains)
-- Use standard adversarial training without clustering
-- Save results to `./ProperTraining/{target_domain}/`
-
-### 2. Pseudo-Label Clustering Sweep
-
-Run experiments with different cluster numbers to find optimal configuration:
-
+#### Pseudo-Label Clustering Sweep
 ```bash
 python main_pseudo.py
 ```
 
-Features:
-- Tests cluster numbers from 5-8 across all domain combinations
-- Generates pseudo-domain labels using Mini-batch K-means clustering
-- Re-clusters every 2 epochs
-- Results saved with cluster configuration in filename
-
-### 3. Extended Training (50 Epochs)
-
-For more thorough training with extended epochs:
-
+#### Extended Training (50 Epochs)
 ```bash
-python main_pseudo_50.py
+python main_pseudo_50.py  # Verify file exists
 ```
 
-**Note**: Verify this file exists in your setup before running.
+### 3. ⚙️ Configuration Management
 
-### Configuration Parameters
+The enhanced system uses YAML configuration files for better parameter management:
 
-Key hyperparameters can be modified in the scripts:
+```yaml
+# config/default_config.yaml
+project:
+  name: "MoMLDNIDS"
+  version: "2.0.0"
+  description: "Multi-Domain NIDS with Enhanced MLOps"
+
+model:
+  feature_extractor:
+    hidden_layers: [64, 32, 16, 10]
+    dropout_rate: 0.3
+    activation: "ELU"
+
+training:
+  epochs: 20
+  batch_size: 1024
+  learning_rate: 0.0015
+  grl_weight: 1.25
+  clustering_step: 2
+
+wandb:
+  enabled: true
+  project: "nids-research"
+  tags: ["domain-adaptation", "intrusion-detection"]
+```
+
+### 4. 🔍 Explainable AI Usage
 
 ```python
-NUM_EPOCH = 20          # Training epochs
-BATCH_SIZE = 1          # Batch size
-CLUSTERING_STEP = 2     # Re-clustering frequency
-NUM_CLUSTERS = 4        # Number of pseudo-domains
-INIT_LEARNING_RATE = 0.0015  # Initial learning rate
-GRL_WEIGHT = 1.25       # Gradient reversal strength
+from skripsi_code.explainability import ModelExplainer
+
+# Initialize explainer
+explainer = ModelExplainer(model, feature_names)
+
+# Generate explanations
+explanation = explainer.explain_instance(
+    instance, 
+    method="integrated_gradients"
+)
+
+# Visualize results
+explainer.plot_feature_importance(explanation)
 ```
 
-## Project Structure
+### 5. 🧪 Environment Validation
+
+Test your setup with the comprehensive validation script:
+
+```bash
+python test_imports.py
+```
+
+This validates:
+- ✅ Core dependencies
+- ✅ Package imports
+- ✅ Configuration loading
+- ✅ Experiment tracking
+- ✅ Explainability modules
+- ✅ Optional dependencies (SHAP, LIME)
+
+## 📁 Project Structure
+
+### 🚀 Enhanced MLOps Structure
 
 ```
 skripsi_code/
-├── README.md                     # This file
-├── requirements.txt              # Python dependencies
-├── main.py                      # Source-only baseline training
-├── main_pseudo.py               # Pseudo-labeling experiments
-├── main_pseudo_50.py            # Extended training variant
-├── smoke_test.py                # Quick functionality tests
+├── 📄 README.md                      # This file  
+├── 📋 requirements.txt               # Python dependencies
+├── 📋 requirements.in                # Dependency constraints
+├── 🔒 uv.lock                       # Locked dependencies
+├── 🧪 test_imports.py                # Comprehensive import validation
 │
-├── skripsi_code/                # Main package
-│   ├── model/                   # Neural network models
-│   │   ├── MoMLNIDS.py         # Main model architecture
-│   │   ├── FeatureExtractor.py  # Domain-invariant feature extractor
-│   │   ├── Classifier.py        # Label classifier
-│   │   └── Discriminator.py     # Domain discriminator with GRL
+├── 🎯 main_improved.py               # ✨ Enhanced training with MLOps
+├── 📜 main.py                        # Legacy: Source-only baseline
+├── 📜 main_pseudo.py                 # Legacy: Pseudo-labeling experiments
+├── 📜 main_pseudo_50.py              # Legacy: Extended training
+├── 🔬 smoke_test.py                  # Quick functionality tests
+│
+├── ⚙️ config/                        # 🆕 Configuration management
+│   ├── default_config.yaml          # Default configuration
+│   └── quick_test_config.yaml       # Quick test setup
+│
+├── 📚 docs/                          # 🆕 Enhanced documentation
+│   ├── FEATURES.md                   # Feature descriptions
+│   ├── USAGE.md                      # Usage guide
+│   ├── CONFIG.md                     # Configuration reference
+│   ├── EXPERIMENT_TRACKING.md        # Experiment tracking guide
+│   ├── EXPLAINABILITY.md            # Explainable AI guide
+│   └── TROUBLESHOOTING.md           # Common issues
+│
+├── 🔄 .github/workflows/             # 🆕 CI/CD pipelines
+│   ├── ci.yml                        # Main CI workflow
+│   └── enhanced-features.yml         # Enhanced features testing
+│
+├── 📦 skripsi_code/                  # Main package
+│   ├── 🧠 model/                     # Neural network models
+│   │   ├── MoMLNIDS.py              # Main model architecture
+│   │   ├── FeatureExtractor.py       # Domain-invariant feature extractor
+│   │   ├── Classifier.py             # Label classifier
+│   │   └── Discriminator.py          # Domain discriminator with GRL
 │   │
-│   ├── clustering/              # Clustering algorithms
-│   │   ├── cluster_methods.py   # K-means, GMM, Spectral clustering
-│   │   └── cluster_utils.py     # Pseudo-labeling utilities
+│   ├── 🎯 clustering/                # Clustering algorithms
+│   │   ├── cluster_methods.py        # K-means, GMM, Spectral clustering
+│   │   └── cluster_utils.py          # Pseudo-labeling utilities
 │   │
-│   ├── utils/                   # Utility functions
-│   │   ├── dataloader.py        # Data loading and preprocessing
-│   │   ├── domain_dataset.py    # Domain-aware dataset class
-│   │   ├── loss.py              # Custom loss functions
-│   │   └── utils.py             # Training utilities
+│   ├── 🛠️ utils/                     # Utility functions
+│   │   ├── dataloader.py             # Data loading and preprocessing
+│   │   ├── domain_dataset.py         # Domain-aware dataset class
+│   │   ├── loss.py                   # Custom loss functions
+│   │   └── utils.py                  # Training utilities
 │   │
-│   ├── TrainEval/              # Training and evaluation
-│   │   └── TrainEval.py        # Training/validation loops
+│   ├── 🏃 TrainEval/                 # Training and evaluation
+│   │   └── TrainEval.py              # Training/validation loops
 │   │
-│   ├── data/                   # Data directory
-│   │   ├── parquet/            # Preprocessed datasets
-│   │   ├── raw/                # Original datasets
-│   │   └── interim/            # Intermediate processing files
+│   ├── ⚙️ config.py                  # 🆕 Configuration management
+│   ├── 📊 experiment.py              # 🆕 Experiment tracking (W&B)
+│   ├── 🔍 explainability.py          # 🆕 Explainable AI module
 │   │
-│   └── pipeline/               # Data processing pipelines
+│   ├── 💾 data/                      # Data directory
+│   │   ├── parquet/                  # Preprocessed datasets
+│   │   ├── raw/                      # Original datasets
+│   │   └── interim/                  # Intermediate processing files
+│   │
+│   └── 🔄 pipeline/                  # Data processing pipelines
 │       └── data_chunking_parquet.py  # Parquet conversion utilities
 │
-└── tests/                      # Unit tests
-    └── test.py                 # Test cases
+├── 🧪 tests/                         # Unit tests
+│   └── test.py                       # Test cases
+│
+└── 📊 results/                       # 🆕 Enhanced results structure
+    ├── experiments/                  # Experiment outputs
+    ├── models/                       # Saved models
+    ├── explanations/                 # XAI outputs
+    └── logs/                         # Training logs
 ```
+
+### 🆕 New MLOps Features
+
+| Component | Description | Benefits |
+|-----------|-------------|----------|
+| ⚙️ **Configuration** | YAML-based config management | Reproducible experiments, easy parameter tuning |
+| 📊 **Experiment Tracking** | Weights & Biases integration | Automatic logging, comparison, collaboration |
+| 🔍 **Explainable AI** | Multiple interpretability methods | Model transparency, debugging, trust |
+| 🧪 **Environment Validation** | Comprehensive import testing | CI reliability, quick setup validation |
+| 📚 **Enhanced Documentation** | Detailed guides and references | Better onboarding, troubleshooting |
+| 🔄 **CI/CD Pipelines** | Automated testing workflows | Quality assurance, continuous integration |
 
 ## Training/Evaluation Cycle
 
