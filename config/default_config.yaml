@@ -28,13 +28,13 @@ model:
     
   discriminator:
     hidden_layers: [64, 32]
-    num_domains: 4  # number of datasets
+    num_domains: 3  # number of datasets
     dropout_rate: 0.2
 
 # Training configuration
 training:
   batch_size: 256
-  epochs: 50
+  epochs: 30
   learning_rate: 0.001
   weight_decay: 1e-4
   
@@ -50,13 +50,13 @@ training:
     
   # Checkpoint saving
   checkpoint:
-    save_every: 5
+    save_every: 2
     save_best: true
 
 # Data configuration
 data:
   datasets:
-    - "NF-BoT-IoT-v2"
+    # - "NF-BoT-IoT-v2"
     - "NF-CSE-CIC-IDS2018-v2" 
     - "NF-ToN-IoT-v2"
     - "NF-UNSW-NB15-v2"
