@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Research project for thesis work"
 authors = [{name = "dzakirm", email = "malikdzaki16@gmail.com"}]
 readme = "README.md"
-requires-python = "<=3.10"
+requires-python = "==3.10"
 dependencies = [
     "black>=25.1.0",
     "captum>=0.7.0",
