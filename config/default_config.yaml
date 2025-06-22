@@ -1,0 +1,140 @@
+# Default Configuration for NIDS Research Project
+
+# Project settings
+project:
+  name: "nids-research"
+  description: "Network Intrusion Detection System using Multi-domain Learning"
+  version: "1.0.0"
+
+# Experiment tracking
+wandb:
+  enabled: true
+  project: "nids-research"
+  entity: null  # Set your wandb username/team
+  tags: ["nids", "multi-domain", "cybersecurity"]
+  
+# Model configuration
+model:
+  name: "MoMLNIDS"
+  feature_extractor:
+    hidden_sizes: [128, 64, 32]
+    dropout: 0.3
+    activation: "relu"
+    
+  classifier:
+    hidden_sizes: [64, 32]
+    num_classes: 2  # binary classification
+    dropout: 0.2
+    
+  discriminator:
+    hidden_sizes: [64, 32]
+    num_domains: 4  # number of datasets
+    dropout: 0.2
+
+# Training configuration
+training:
+  batch_size: 256
+  epochs: 50
+  learning_rate: 0.001
+  weight_decay: 1e-4
+  
+  # Multi-domain learning weights
+  domain_weight: 1.0
+  classification_weight: 1.0
+  
+  # Early stopping
+  early_stopping:
+    enabled: true
+    patience: 10
+    min_delta: 0.001
+    
+  # Checkpoint saving
+  checkpoint:
+    save_every: 5
+    save_best: true
+
+# Data configuration
+data:
+  datasets:
+    - "NF-BoT-IoT-v2"
+    - "NF-CSE-CIC-IDS2018-v2" 
+    - "NF-ToN-IoT-v2"
+    - "NF-UNSW-NB15-v2"
+    
+  # Data paths
+  raw_data_path: "skripsi_code/data/raw"
+  interim_data_path: "skripsi_code/data/interim"
+  processed_data_path: "skripsi_code/data/processed"
+  
+  # Preprocessing
+  preprocessing:
+    normalize: true
+    handle_missing: "drop"
+    feature_selection: false
+    
+  # Data splits
+  train_ratio: 0.7
+  val_ratio: 0.15
+  test_ratio: 0.15
+  
+  # Clustering configuration
+  clustering:
+    method: "kmeans"
+    n_clusters: 10
+    random_state: 42
+
+# Evaluation configuration
+evaluation:
+  metrics:
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "f1_score"
+    - "auc_roc"
+    
+  # Cross-validation
+  cross_validation:
+    enabled: false
+    folds: 5
+    
+# Explainable AI configuration
+explainable_ai:
+  enabled: true
+  methods:
+    - "shap"
+    - "lime"
+    - "integrated_gradients"
+    
+  # Feature importance analysis
+  feature_importance:
+    enabled: true
+    top_k_features: 20
+    
+  # Visualization settings
+  visualization:
+    save_plots: true
+    plot_format: "png"
+    dpi: 300
+
+# Logging configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/experiment.log"
+  
+# Output paths
+output:
+  models_dir: "models"
+  results_dir: "results" 
+  plots_dir: "plots"
+  logs_dir: "logs"
+  
+# Reproducibility
+random_seed: 42
+deterministic: true
+
+# Hardware configuration
+device:
+  use_cuda: true
+  cuda_device: 0
+  num_workers: 4
