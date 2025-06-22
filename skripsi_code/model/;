@@ -1,0 +1,56 @@
+import torch.nn as nn
+import torch
+from torch import Tensor
+from torchsummary import summary
+from typing import List
+
+class DGFeatExt(nn.Module):
+    def __init__(self, input_nodes: int, hidden_nodes: List[int]= None) -> None:
+        super(DGFeatExt, self).__init__()
+        self.input_nodes: int= input_nodes
+        self.hidden_nodes: List[int]= [self.input_nodes] + (hidden_nodes if hidden_nodes else [10] * 4)
+        self.hidden_layers: int= len(hidden_nodes)
+
+        self.fc_modules: nn.ModuleList = nn.ModuleList()
+
+        """
+        Singla, A., Bertino, E. and Verma, D., 2020. Preparing Network Intrusion Detection Deep Learning Models with Minimal Data Using Adversarial Domain Adaptation. In: Proceedings of the 15th ACM Asia Conference on Computer and Communications Security. [online] ASIA CCS ’20: The 15th ACM Asia Conference on Computer and Communications Security. Taipei Taiwan: ACM. pp.127–140. https://doi.org/10.1145/3320269.3384718.
+        """
+
+        for i in range(self.hidden_layers):
+            self.fc_modules.append(
+                nn.Sequential(
+                    nn.Linear(self.hidden_nodes[i], self.hidden_nodes[i + 1]),
+                    nn.BatchNorm1d(self.hidden_nodes[i + 1]),
+                    nn.ReLU()
+                )
+            )
+
+    def forward(self, x: Tensor) -> Tensor:
+        for layers in self.fc_modules:
+            x: Tensor = layers(x)
+        return x
+
+    def feat_ext(self, x: Tensor) -> Tensor:
+        result = []
+        for layers in self.hidden_layers:
+            x: Tensor = self.fc_modules[layers](x)
+        return x
+
+
+class DomainClassifier(nn.Module):
+    def __init__(self, input_nodes: int, num_domains: int= 3, grl: bool= True) -> None:
+        self.num_domains: int = num_domains
+        pass
+
+class LabelClassifier(nn.Module):
+    def __init__(self, input_nodes: int, num_classes: int= 2) -> None:
+        self.num_classes: int = num_classes
+        pass
+
+if __name__ == "__main__":
+    model = DGFeatExt(input_nodes=20, hidden_nodes=[64, 32, 16]).to('cuda')
+    print(model)
+    x = torch.randn(5, 20).to('cuda') # Batch of 5, input size of 20
+    summary(model, x)
+

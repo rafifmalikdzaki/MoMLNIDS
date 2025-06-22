@@ -1,0 +1,15 @@
+[project]
+name = "skripsi-code"
+version = "0.1.0"
+description = "Research project for thesis work"
+authors = [{name = "dzakirm", email = "malikdzaki16@gmail.com"}]
+readme = "README.md"
+requires-python = ">=3.10"
+
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["skripsi_code*"]
+exclude = ["data*", "ProperTraining*", "Training_results*", "ProperTraining50Epoch*", "tests*"]

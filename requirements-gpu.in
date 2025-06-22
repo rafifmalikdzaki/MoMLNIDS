@@ -1,0 +1,13 @@
+# GPU/CUDA dependencies
+# These packages require CUDA support and GPU hardware
+
+# PyTorch with CUDA support
+torch==2.4.1
+torchvision==0.19.1
+torchaudio==2.4.1
+
+# JAX with CUDA support
+jax[cuda12]==0.4.35
+
+# CUDA utilities
+cuda-python==12.6.0

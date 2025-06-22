@@ -1,0 +1,89 @@
+    # for i in range(4):
+    if i := 1:
+        VERBOSE = False
+        SINGLE_LAYER = True
+        DOMAIN_LIST = [
+            "NF-UNSW-NB15-v2",
+            "NF-CSE-CIC-IDS2018-v2",
+            "NF-ToN-IoT-v2",
+            # "NF-BoT-IoT-v2",
+        ]
+
+        # use the probability
+        DOMAIN_REWEIGHTING = [
+            23,
+            187,
+            169,
+        ]
+
+        # Use arithmethic mean
+        LABEL_REWEIGHTING = [
+            # Benign, Attack
+            (0.8735, 0.1265),
+            (0.8307, 0.1693),
+            (0.0356, 0.9644)
+            # (0.01, 0.9999)
+        ]
+
+        HIDDEN_NODES = [64, 32, 16, 10]
+        CLASS_NODES = [10, 10]
+
+        # Variables
+        EXPERIMENT_NUM = "SingleLayer|1-n"
+        TARGET_INDEX = i
+        BATCH_SIZE = 1
+
+        del DOMAIN_REWEIGHTING[TARGET_INDEX]
+        del LABEL_REWEIGHTING[TARGET_INDEX]
+
+        DOMAIN_WEIGHT = np.array(DOMAIN_REWEIGHTING)
+        DOMAIN_WEIGHT = DOMAIN_WEIGHT / DOMAIN_WEIGHT.sum()
+
+        LABEL_WEIGHT = np.array(LABEL_REWEIGHTING)
+        LABEL_WEIGHT = LABEL_WEIGHT.mean(axis=0)
+
+        print(f"{DOMAIN_WEIGHT=}, {LABEL_WEIGHT=}")
+
+        SAVE_PATH = Path(
+            f"./Training_results/{DOMAIN_LIST[TARGET_INDEX]}_N{EXPERIMENT_NUM}"
+        )
+        SAVE_PATH.mkdir(parents=True, exist_ok=True)
+
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        USE_CLUSTER = False
+        USE_DOMAIN = not USE_CLUSTER
+        print(f"{USE_DOMAIN=}, {USE_CLUSTER=}, {device=}\n")
+
+        NUM_EPOCH = 20
+        EVAL_STEP = 1
+        SAVE_STEP = 2
+        INIT_LEARNING_RATE = 0.0015
+
+        # Training Weights
+        CLASSIFIER_WEIGHT = 1
+        DISCRIMINATOR_WEIGHT = 1
+        EXTRACTOR_WEIGHT = 1
+
+        CLASS_LOSS_WEIGHT = None
+        DISCRIMINATOR_LOSS_WEIGHT = None
+        DISCRIMINATOR_LOSS_WEIGHT = torch.tensor(DOMAIN_WEIGHT, dtype=torch.double, device=device)
+        CLASS_LOSS_WEIGHT = torch.tensor(LABEL_WEIGHT, dtype=torch.double, device=device)
+        ENTROPY_WEIGHT = 1
+        GRL_WEIGHT = 1.25
+        LABEL_SMOOTH = 0.1
+
+        # Optimizer
+        WEIGHT_DECAY = 5e-4
+        AMSGRAD = True
+
+        # Learning Rate Scheduler
+        T_MAX = 10
+
+        # Domain Info
+        NUM_DOMAINS = len(DOMAIN_LIST) - 1
+        NUM_CLUSTERS = 3
+        NUM_CLASSES = 2
+        CLUSTERING_STEP = 2
+
+        DATA_PATH = "./skripsi_code/data/parquet/"
