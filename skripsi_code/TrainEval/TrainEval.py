@@ -1,8 +1,10 @@
+import wandb
 from torch import nn
 from skripsi_code.utils.loss import EntropyLoss, MaximumSquareLoss
 import torch
-from sklearn.metrics import f1_score, precision_score, recall_score, roc_auc_score
+from sklearn.metrics import f1_score, precision_score, recall_score, roc_auc_score, roc_curve, precision_recall_curve
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 def check_gradient_norm(model, threshold=1e4):
@@ -152,6 +154,19 @@ def train(
 
     with open(filename, "a") as f:
         f.write(log + "\n")
+    
+    wandb.log({
+        "Train/Loss_Class": epoch_loss_class,
+        "Train/Acc_Class": epoch_acc_class,
+        "Train/Loss_Domain": epoch_loss_domain,
+        "Train/Acc_Domain": epoch_acc_domain,
+        "Train/Loss_Entropy": epoch_loss_entropy,
+        "Train/F1_Score": f1,
+        "Train/Precision": precision,
+        "Train/Recall": recall,
+        "Train/Alpha": alpha
+    }, step=epoch)
+    
     return model, optimizers
 
 
@@ -197,12 +212,57 @@ def eval(model, eval_data, device, epoch, filename):
     precision = precision_score(all_labels, all_predictions, average="weighted")
     recall = recall_score(all_labels, all_predictions, average="weighted")
 
+    # Calculate ROC AUC
+    # Convert labels to one-hot for roc_auc_score
+    num_classes = output.shape[1]
+    all_labels_one_hot = np.eye(num_classes)[all_labels]
+    all_predictions_proba = torch.nn.functional.softmax(output, dim=1).cpu().numpy()
+
+    roc_auc = roc_auc_score(all_labels_one_hot, all_predictions_proba, average="weighted", multi_class="ovr")
+
     log = (
         f"Eval: Epoch: {epoch} Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f} "
         f"F1 Score: {f1:.4f} Precision: {precision:.4f} Recall: {recall:.4f} "
+        f"ROC AUC: {roc_auc:.4f}"
     )
     print(log)
 
     with open(filename, "a") as f:
         f.write(log + "\n")
+
+    # Log metrics to wandb
+    wandb.log({
+        "Eval/Loss": epoch_loss,
+        "Eval/Accuracy": epoch_acc,
+        "Eval/F1_Score": f1,
+        "Eval/Precision": precision,
+        "Eval/Recall": recall,
+        "Eval/ROC_AUC": roc_auc
+    }, step=epoch)
+
+    # Plot ROC Curve
+    plt.figure(figsize=(8, 6))
+    for i in range(num_classes):
+        fpr, tpr, _ = roc_curve(all_labels_one_hot[:, i], all_predictions_proba[:, i])
+        plt.plot(fpr, tpr, label=f'Class {i} (AUC = {roc_auc_score(all_labels_one_hot[:, i], all_predictions_proba[:, i]):.2f})')
+    plt.plot([0, 1], [0, 1], 'k--', label='Random')
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('ROC Curve')
+    plt.legend()
+    wandb.log({"Eval/ROC_Curve": wandb.Image(plt)}, step=epoch)
+    plt.close()
+
+    # Plot PR Curve
+    plt.figure(figsize=(8, 6))
+    for i in range(num_classes):
+        precision_curve, recall_curve, _ = precision_recall_curve(all_labels_one_hot[:, i], all_predictions_proba[:, i])
+        plt.plot(recall_curve, precision_curve, label=f'Class {i}')
+    plt.xlabel('Recall')
+    plt.ylabel('Precision')
+    plt.title('Precision-Recall Curve')
+    plt.legend()
+    wandb.log({"Eval/PR_Curve": wandb.Image(plt)}, step=epoch)
+    plt.close()
+
     return epoch_acc

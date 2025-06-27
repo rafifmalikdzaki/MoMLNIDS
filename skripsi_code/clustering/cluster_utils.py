@@ -58,7 +58,9 @@ def compute_statistics(
     running_index = 0
 
     for batch, (X, *_) in enumerate(dataloader):
-
+            input_tensor = X.double().to(device)
+            original_shape = input_tensor.shape
+            input_tensor = input_tensor.view(-1, original_shape[-1]) # Flatten to (N, features)
             batch_size = input_tensor.shape[0]
             features_extracted: Tensor = model.FeatureExtractorLayer.feature_extraction(
                 input_tensor
@@ -160,6 +162,13 @@ def pseudolabeling(
         # append log to file
         with open(log_file, "a") as f:
             f.write(log + "\n")
+
+    import wandb
+    wandb.log({
+        "Clustering/NMI_Class": class_nmi,
+        "Clustering/NMI_Domain": domain_nmi,
+        "Clustering/NMI_Previous": previous_nmi
+    }, step=epoch)
 
     # Get the mapping e.g: [1, 0, 3, 2] memiliki arti bahwa cluster 0 (index) akan di isi oleh data cluster 1 (value) dan seterusnya
     reassignment_mappings: List[int] = pseudolabel_reassignment(

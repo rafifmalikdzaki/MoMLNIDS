@@ -19,9 +19,12 @@ def init_weights(m):
     if isinstance(m, (nn.Linear, nn.Conv2d)):
         torch.nn.init.xavier_normal_(m.weight)
 
+import wandb
+
 if __name__ == "__main__":
 
     for i in range(3):
+        wandb.init(project="MoMLNIDS_Training", name=f"Experiment_{i}")
     # if i := 1:
         VERBOSE = False
         SINGLE_LAYER = True
@@ -244,6 +247,8 @@ if __name__ == "__main__":
 
             for scheduler in model_schedulers:
                 scheduler.step()
+
+        wandb.finish()
 
         # best_model = MoMLDNIDS(
         #     input_nodes=39,

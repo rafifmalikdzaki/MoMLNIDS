@@ -61,7 +61,7 @@ class MultiChunkParquet(Dataset):
             )
             _label = sample.select(pl.nth(43)).cast(pl.Int64)
 
-            features = torch.tensor(_features.to_numpy()).squeeze()
+            features = torch.tensor(_features.to_numpy())
             features = torch.nan_to_num(features, nan=0.0, posinf=1e5, neginf=-1e5)
             label = torch.tensor(_label.to_numpy()).squeeze()
             output = [features, label]
@@ -236,7 +236,7 @@ class MultiChunkDataset(Dataset):
             )
             _label = sample.select(pl.nth(43)).cast(pl.Int32)
 
-            features = torch.tensor(_features.to_numpy()).squeeze()
+            features = torch.tensor(_features.to_numpy())
             label = torch.tensor(_label.to_numpy()).squeeze()
         else:
             chunk_index = idx // self.chunk_size
@@ -250,7 +250,7 @@ class MultiChunkDataset(Dataset):
             )
             _label = sample.select(pl.nth(43)).cast(pl.Int32)
 
-            features = torch.tensor(_features.to_numpy()).squeeze()
+            features = torch.tensor(_features.to_numpy())
             label = torch.tensor(_label.item())
 
         output = (features, label)

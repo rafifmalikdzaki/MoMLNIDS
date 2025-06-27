@@ -17,7 +17,7 @@ Network Intrusion Detection Systems (NIDS) face significant challenges when depl
 - 📊 **MLOps Integration**: Complete experiment tracking, configuration management, and explainable AI capabilities
 
 ✨ **Modern ML Research Features:**
-- 📈 **Experiment Tracking**: Weights & Biases integration for comprehensive experiment management
+- 📈 **Experiment Tracking**: Weights & Biases integration for comprehensive metric logging (including ROC-AUC, PR curves, and clustering metrics) and visualization for comprehensive experiment management
 - ⚙️ **Configuration Management**: YAML-based configuration system with validation
 - 🔍 **Explainable AI**: Multiple interpretability methods (SHAP, LIME, Integrated Gradients)
 - 🔄 **Reproducible Research**: Automated environment management and deterministic training
