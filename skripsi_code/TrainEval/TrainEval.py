@@ -2,7 +2,7 @@ import wandb
 from torch import nn
 from skripsi_code.utils.loss import EntropyLoss, MaximumSquareLoss
 import torch
-from sklearn.metrics import f1_score, precision_score, recall_score, roc_auc_score, roc_curve, precision_recall_curve, confusion_matrix
+from torchmetrics import F1Score, Precision, Recall, ROC, AUROC, AveragePrecision, MatthewsCorrCoef, ConfusionMatrix, Specificity
 import numpy as np
 import matplotlib.pyplot as plt
 from torch.cuda.amp import autocast, GradScaler
@@ -74,8 +74,22 @@ def train(
 
     data_size = 0
 
-    all_labels = []
-    all_predictions = []
+    num_classes = model.ClassClassifier.output_dim # Assuming this is how to get num_classes
+    
+    # Initialize TorchMetrics for training
+    f1_metric_train = F1Score(task="multiclass", num_classes=num_classes, average="weighted").to(device)
+    precision_metric_train = Precision(task="multiclass", num_classes=num_classes, average="weighted").to(device)
+    recall_metric_train = Recall(task="multiclass", num_classes=num_classes, average="weighted").to(device)
+    auroc_metric_train = AUROC(task="multiclass", num_classes=num_classes, average="weighted").to(device)
+    avg_precision_metric_train = AveragePrecision(task="multiclass", num_classes=num_classes, average="weighted").to(device)
+    mcc_metric_train = MatthewsCorrCoef(task="multiclass", num_classes=num_classes).to(device)
+    sensitivity_metric_train = Recall(task="multiclass", num_classes=num_classes, average="weighted").to(device) # Sensitivity is Recall
+    specificity_metric_train = Specificity(task="multiclass", num_classes=num_classes, average="weighted").to(device)
+    conf_matrix_train = ConfusionMatrix(task="multiclass", num_classes=num_classes).to(device)
+
+    all_labels_tensor = torch.tensor([], dtype=torch.long, device=device)
+    all_predictions_tensor = torch.tensor([], dtype=torch.long, device=device)
+    all_predictions_proba_tensor = torch.tensor([], dtype=torch.float, device=device)
 
     for data, class_label, domain_label in train_data:
         data, class_label, domain_label = (
@@ -118,8 +132,19 @@ def train(
             scaler.step(optimizer)
         scaler.update()
 
-        all_labels.extend(class_label.data.numpy(force=True))
-        all_predictions.extend(pred_class.numpy(force=True))
+        all_labels_tensor = torch.cat((all_labels_tensor, class_label))
+        all_predictions_tensor = torch.cat((all_predictions_tensor, pred_class))
+        all_predictions_proba_tensor = torch.cat((all_predictions_proba_tensor, torch.nn.functional.softmax(output_class, dim=1)))
+
+        f1_metric_train.update(pred_class, class_label)
+        precision_metric_train.update(pred_class, class_label)
+        recall_metric_train.update(pred_class, class_label)
+        auroc_metric_train.update(output_class, class_label)
+        avg_precision_metric_train.update(output_class, class_label)
+        mcc_metric_train.update(pred_class, class_label)
+        sensitivity_metric_train.update(pred_class, class_label)
+        specificity_metric_train.update(pred_class, class_label)
+        conf_matrix_train.update(pred_class, class_label)
 
         # Classifier Loss
         running_loss_class += loss_class.item() * data.size(0)
@@ -143,16 +168,24 @@ def train(
     # Entropy Loss on Epoch
     epoch_loss_entropy = running_loss_entropy / data_size
 
-    f1 = f1_score(all_labels, all_predictions, average="weighted")
-    precision = precision_score(all_labels, all_predictions, average="weighted")
-    recall = recall_score(all_labels, all_predictions, average="weighted")
+    # Calculate metrics using TorchMetrics
+    f1_train = f1_metric_train.compute()
+    precision_train = precision_metric_train.compute()
+    recall_train = recall_metric_train.compute()
+    auroc_train = auroc_metric_train.compute()
+    avg_precision_train = avg_precision_metric_train.compute()
+    mcc_train = mcc_metric_train.compute()
+    sensitivity_train = sensitivity_metric_train.compute()
+    specificity_train = specificity_metric_train.compute()
 
     log = (
         f"Train: Epoch: {epoch}/{num_epoch} | Alpha: {alpha:.4f} |\n"
         f"LClass: {epoch_loss_class:.4f} | Acc Class: {epoch_acc_class:.4f} |\n"
         f"LDomain: {epoch_loss_domain:.4f} | Acc Domain: {epoch_acc_domain:.4f} |\n"
         f"Loss Entropy: {epoch_loss_entropy:.4f} |\n"
-        f"F1 Score: {f1:.4f} Precision: {precision:.4f} Recall: {recall:.4f} \n"
+        f"F1 Score: {f1_train:.4f} Precision: {precision_train:.4f} Recall: {recall_train:.4f} \n"
+        f"AUROC: {auroc_train:.4f} Avg Precision: {avg_precision_train:.4f} MCC: {mcc_train:.4f} \n"
+        f"Sensitivity: {sensitivity_train:.4f} Specificity: {specificity_train:.4f}"
     )
 
     print(log)
@@ -166,9 +199,14 @@ def train(
         "Train/Loss_Domain": epoch_loss_domain,
         "Train/Acc_Domain": epoch_acc_domain,
         "Train/Loss_Entropy": epoch_loss_entropy,
-        "Train/F1_Score": f1,
-        "Train/Precision": precision,
-        "Train/Recall": recall,
+        "Train/F1_Score": f1_train,
+        "Train/Precision": precision_train,
+        "Train/Recall": recall_train,
+        "Train/AUROC": auroc_train,
+        "Train/Average_Precision": avg_precision_train,
+        "Train/MCC": mcc_train,
+        "Train/Sensitivity": sensitivity_train,
+        "Train/Specificity": specificity_train,
         "Train/Alpha": alpha
     }, step=epoch)
     
@@ -184,8 +222,22 @@ def eval(model, eval_data, device, epoch, filename):
     running_corrects = 0
     data_size = 0
 
-    all_labels = []
-    all_predictions = []
+    all_labels = torch.tensor([], dtype=torch.long, device=device)
+    all_predictions = torch.tensor([], dtype=torch.long, device=device)
+    all_predictions_proba = torch.tensor([], dtype=torch.float, device=device)
+
+    num_classes = output.shape[1]
+
+    # Initialize TorchMetrics for evaluation
+    f1_metric_eval = F1Score(task="multiclass", num_classes=num_classes, average="weighted").to(device)
+    precision_metric_eval = Precision(task="multiclass", num_classes=num_classes, average="weighted").to(device)
+    recall_metric_eval = Recall(task="multiclass", num_classes=num_classes, average="weighted").to(device)
+    auroc_metric_eval = AUROC(task="multiclass", num_classes=num_classes, average="weighted").to(device)
+    avg_precision_metric_eval = AveragePrecision(task="multiclass", num_classes=num_classes, average="weighted").to(device)
+    mcc_metric_eval = MatthewsCorrCoef(task="multiclass", num_classes=num_classes).to(device)
+    sensitivity_metric_eval = Recall(task="multiclass", num_classes=num_classes, average="weighted").to(device) # Sensitivity is Recall
+    specificity_metric_eval = Specificity(task="multiclass", num_classes=num_classes, average="weighted").to(device)
+    conf_matrix_eval = ConfusionMatrix(task="multiclass", num_classes=num_classes).to(device)
 
     with torch.inference_mode():
         for data, labels, *_ in eval_data:
@@ -204,32 +256,37 @@ def eval(model, eval_data, device, epoch, filename):
             running_corrects += torch.sum(prediction == labels.data).item()
             data_size += data.size(0)
 
-            all_labels.extend(labels.data.numpy(force=True))
-            all_predictions.extend(prediction.numpy(force=True))
+            all_labels.extend(labels.data)
+            all_predictions.extend(prediction)
+            
+            f1_metric_eval.update(prediction, labels)
+            precision_metric_eval.update(prediction, labels)
+            recall_metric_eval.update(prediction, labels)
+            auroc_metric_eval.update(output, labels)
+            avg_precision_metric_eval.update(output, labels)
+            mcc_metric_eval.update(prediction, labels)
+            sensitivity_metric_eval.update(prediction, labels)
+            specificity_metric_eval.update(prediction, labels)
+            conf_matrix_eval.update(prediction, labels)
 
     epoch_loss = running_loss / data_size
     epoch_acc = running_corrects / data_size
 
-    all_labels = np.array(all_labels)
-    all_predictions = np.array(all_predictions)
-
-    # Calculate F1 score, precision, and recall
-    f1 = f1_score(all_labels, all_predictions, average="weighted")
-    precision = precision_score(all_labels, all_predictions, average="weighted")
-    recall = recall_score(all_labels, all_predictions, average="weighted")
-
-    # Calculate ROC AUC
-    # Convert labels to one-hot for roc_auc_score
-    num_classes = output.shape[1]
-    all_labels_one_hot = np.eye(num_classes)[all_labels]
-    all_predictions_proba = torch.nn.functional.softmax(output, dim=1).cpu().numpy()
-
-    roc_auc = roc_auc_score(all_labels_one_hot, all_predictions_proba, average="weighted", multi_class="ovr")
+    # Calculate metrics using TorchMetrics
+    f1_eval = f1_metric_eval.compute()
+    precision_eval = precision_metric_eval.compute()
+    recall_eval = recall_metric_eval.compute()
+    auroc_eval = auroc_metric_eval.compute()
+    avg_precision_eval = avg_precision_metric_eval.compute()
+    mcc_eval = mcc_metric_eval.compute()
+    sensitivity_eval = sensitivity_metric_eval.compute()
+    specificity_eval = specificity_metric_eval.compute()
 
     log = (
-        f"Eval: Epoch: {epoch} Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f} "
-        f"F1 Score: {f1:.4f} Precision: {precision:.4f} Recall: {recall:.4f} "
-        f"ROC AUC: {roc_auc:.4f}"
+        f"Eval: Epoch: {epoch} Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f} \n"
+        f"F1 Score: {f1_eval:.4f} Precision: {precision_eval:.4f} Recall: {recall_eval:.4f} \n"
+        f"AUROC: {auroc_eval:.4f} Avg Precision: {avg_precision_eval:.4f} MCC: {mcc_eval:.4f} \n"
+        f"Sensitivity: {sensitivity_eval:.4f} Specificity: {specificity_eval:.4f}"
     )
     print(log)
 
@@ -238,41 +295,25 @@ def eval(model, eval_data, device, epoch, filename):
 
     # Log metrics to wandb
     wandb.log({
-        "Eval/Loss": epoch_loss,
-        "Eval/Accuracy": epoch_acc,
-        "Eval/F1_Score": f1,
-        "Eval/Precision": precision,
-        "Eval/Recall": recall,
-        "Eval/ROC_AUC": roc_auc
+        "Val/Loss": epoch_loss,
+        "Val/Accuracy": epoch_acc,
+        "Val/F1_Score": f1_eval,
+        "Val/Precision": precision_eval,
+        "Val/Recall": recall_eval,
+        "Val/AUROC": auroc_eval,
+        "Val/Average_Precision": avg_precision_eval,
+        "Val/MCC": mcc_eval,
+        "Val/Sensitivity": sensitivity_eval,
+        "Val/Specificity": specificity_eval
     }, step=epoch)
 
-    # Plot ROC Curve
-    plt.figure(figsize=(8, 6))
-    for i in range(num_classes):
-        fpr, tpr, _ = roc_curve(all_labels_one_hot[:, i], all_predictions_proba[:, i])
-        plt.plot(fpr, tpr, label=f'Class {i} (AUC = {roc_auc_score(all_labels_one_hot[:, i], all_predictions_proba[:, i]):.2f})')
-    plt.plot([0, 1], [0, 1], 'k--', label='Random')
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title('ROC Curve')
-    plt.legend()
-    wandb.log({"Eval/ROC_Curve": wandb.Image(plt)}, step=epoch)
-    plt.close()
+    # Log ROC Curve
+    wandb.log({"Val/ROC_Curve": wandb.plot.roc_curve(y_true=torch.cat(all_labels).cpu(), y_probas=torch.cat(all_predictions_proba).cpu(), labels=[str(i) for i in range(num_classes)])}, step=epoch)
 
-    # Plot PR Curve
-    plt.figure(figsize=(8, 6))
-    for i in range(num_classes):
-        precision_curve, recall_curve, _ = precision_recall_curve(all_labels_one_hot[:, i], all_predictions_proba[:, i])
-        plt.plot(recall_curve, precision_curve, label=f'Class {i}')
-    plt.xlabel('Recall')
-    plt.ylabel('Precision')
-    plt.title('Precision-Recall Curve')
-    plt.legend()
-    wandb.log({"Eval/PR_Curve": wandb.Image(plt)}, step=epoch)
-    plt.close()
+    # Log PR Curve
+    wandb.log({"Val/PR_Curve": wandb.plot.pr_curve(y_true=torch.cat(all_labels).cpu(), y_probas=torch.cat(all_predictions_proba).cpu(), labels=[str(i) for i in range(num_classes)])}, step=epoch)
 
     # Log Confusion Matrix
-    cm = confusion_matrix(all_labels, all_predictions)
-    wandb.log({"Eval/Confusion_Matrix": wandb.plot.confusion_matrix(preds=all_predictions, y_true=all_labels, class_names=[str(i) for i in range(num_classes)])}, step=epoch)
+    wandb.log({"Val/Confusion_Matrix": wandb.plot.confusion_matrix(preds=torch.cat(all_predictions).cpu(), y_true=torch.cat(all_labels).cpu(), class_names=[str(i) for i in range(num_classes)])}, step=epoch)}
 
     return epoch_acc
