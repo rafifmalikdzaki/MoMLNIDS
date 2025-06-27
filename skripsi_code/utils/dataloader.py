@@ -45,12 +45,12 @@ def random_split_dataloader(
     )
 
     source_train = DataLoader(
-        source_train, batch_size=batch_size, shuffle=True, num_workers=n_workers
+        source_train, batch_size=batch_size, shuffle=True, num_workers=n_workers, pin_memory=True
     )
     source_val = DataLoader(
-        source_val, batch_size=batch_size, shuffle=False, num_workers=n_workers
+        source_val, batch_size=batch_size, shuffle=False, num_workers=n_workers, pin_memory=True
     )
     target_test = DataLoader(
-        target_data, batch_size=batch_size, shuffle=False, num_workers=n_workers
+        target_data, batch_size=batch_size, shuffle=False, num_workers=n_workers, pin_memory=True
     )
     return source_train, source_val, target_test

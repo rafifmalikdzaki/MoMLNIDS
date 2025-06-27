@@ -87,7 +87,7 @@ if __name__ == "__main__":
         print(f"{USE_DOMAIN=}, {USE_CLUSTER=}, {device=}\n")
 
         NUM_EPOCH = 20
-        EVAL_STEP = 1
+        EVAL_STEP = 1 # Validation every epoch
         SAVE_STEP = 2
         INIT_LEARNING_RATE = 0.0015
 

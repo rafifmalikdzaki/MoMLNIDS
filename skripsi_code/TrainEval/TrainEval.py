@@ -2,9 +2,10 @@ import wandb
 from torch import nn
 from skripsi_code.utils.loss import EntropyLoss, MaximumSquareLoss
 import torch
-from sklearn.metrics import f1_score, precision_score, recall_score, roc_auc_score, roc_curve, precision_recall_curve
+from sklearn.metrics import f1_score, precision_score, recall_score, roc_auc_score, roc_curve, precision_recall_curve, confusion_matrix
 import numpy as np
 import matplotlib.pyplot as plt
+from torch.cuda.amp import autocast, GradScaler
 
 
 def check_gradient_norm(model, threshold=1e4):
@@ -42,6 +43,8 @@ def train(
     entropy_weight=1.0,
     grl_weight=1.0,
 ):
+    scaler = GradScaler()
+
     # Reloading buffer
     # train_data.dataset.dataset.reload_buffer()
 
@@ -76,7 +79,7 @@ def train(
 
     for data, class_label, domain_label in train_data:
         data, class_label, domain_label = (
-            data.squeeze().double().to(device),
+            data.double().to(device),
             class_label.squeeze().long().to(device),
             domain_label.squeeze().long().to(device),
         )
@@ -92,26 +95,28 @@ def train(
         for optimizer in optimizers:
             optimizer.zero_grad()
 
-        output_class, output_domain = model(data)
+        with autocast():
+            output_class, output_domain = model(data)
 
-        loss_class = class_criterion(output_class, class_label)
-        loss_domain = domain_criterion(output_domain, domain_label)
-        loss_entropy = entropy_criterion(output_class)
+            loss_class = class_criterion(output_class, class_label)
+            loss_domain = domain_criterion(output_domain, domain_label)
+            loss_entropy = entropy_criterion(output_class)
+
+            total_loss = loss_class + loss_domain + loss_entropy * beta
 
         pred_class = output_class.squeeze().argmax(dim=1)
         pred_domain = output_domain.squeeze().argmax(dim=1)
 
-        total_loss = loss_class + loss_domain + loss_entropy * beta
-
         # print(f"{loss_class.item():.4f}, {loss_domain.item():.4f}, {loss_entropy.item():.4f}")
 
-        total_loss.backward()
+        scaler.scale(total_loss).backward()
 
         check_gradient_norm(model)
         check_nan_inf_in_gradients(model)
 
         for optimizer in optimizers:
-            optimizer.step()
+            scaler.step(optimizer)
+        scaler.update()
 
         all_labels.extend(class_label.data.numpy(force=True))
         all_predictions.extend(pred_class.numpy(force=True))
@@ -168,6 +173,7 @@ def train(
     }, step=epoch)
     
     return model, optimizers
+
 
 
 def eval(model, eval_data, device, epoch, filename):
@@ -264,5 +270,9 @@ def eval(model, eval_data, device, epoch, filename):
     plt.legend()
     wandb.log({"Eval/PR_Curve": wandb.Image(plt)}, step=epoch)
     plt.close()
+
+    # Log Confusion Matrix
+    cm = confusion_matrix(all_labels, all_predictions)
+    wandb.log({"Eval/Confusion_Matrix": wandb.plot.confusion_matrix(preds=all_predictions, y_true=all_labels, class_names=[str(i) for i in range(num_classes)])}, step=epoch)
 
     return epoch_acc
