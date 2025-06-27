@@ -1,4 +1,3 @@
-
 # Experiment Configuration
 experiment:
   verbose: False
@@ -25,6 +24,7 @@ experiment:
   data_path: "./skripsi_code/data/parquet/"
   input_nodes: 39
   use_cluster: True
+  eval_batch_frequency: 10000
 
 domain_list:
   - "NF-UNSW-NB15-v2"

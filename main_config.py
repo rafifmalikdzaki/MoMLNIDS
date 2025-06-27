@@ -64,6 +64,8 @@ if __name__ == "__main__":
     NUM_CLASSES = exp_config['num_classes']
     CLUSTERING_STEP = exp_config['clustering_step']
     DATA_PATH = exp_config['data_path']
+    INPUT_NODES = exp_config['input_nodes']
+    EVAL_BATCH_FREQUENCY = exp_config['eval_batch_frequency']
 
     # Use the loaded domain_list
     DOMAIN_LIST = domain_list_cfg
@@ -167,6 +169,7 @@ if __name__ == "__main__":
     best_accuracy = 0.0
     test_accuracy = 0.0
     best_epoch = 0
+    global_step = 0
 
     for epoch in tqdm(range(NUM_EPOCH), disable=VERBOSE):
         print(
@@ -196,7 +199,8 @@ if __name__ == "__main__":
 
                 source_dataset.cluster_label = pseudo_domain_label
 
-        model, optimizers = train(
+        # Modify train function to return number of batches processed
+        model, optimizers, num_batches = train(
             model=model,
             train_data=source_train,
             optimizers=optimizers,
@@ -211,7 +215,10 @@ if __name__ == "__main__":
             grl_weight=GRL_WEIGHT,
         )
 
-        if epoch % EVAL_STEP == 0:
+        # Update global step after each training epoch
+        global_step += num_batches
+
+        if global_step % EVAL_BATCH_FREQUENCY == 0:
             val_accuracy = eval(
                 model=model,
                 eval_data=source_val,
@@ -228,11 +235,11 @@ if __name__ == "__main__":
                 filename=SAVE_PATH / "target_performance.log",
             )
 
-        if val_accuracy >= best_accuracy:
-            best_accuracy = val_accuracy
-            test_accuracy = target_accuracy
-            best_epoch = epoch
-            torch.save(model.state_dict(), SAVE_PATH / "model_best.pt")
+            if val_accuracy >= best_accuracy:
+                best_accuracy = val_accuracy
+                test_accuracy = target_accuracy
+                best_epoch = epoch
+                torch.save(model.state_dict(), SAVE_PATH / "model_best.pt")
 
         for scheduler in model_schedulers:
             scheduler.step()

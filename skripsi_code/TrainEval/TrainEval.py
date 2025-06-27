@@ -172,7 +172,7 @@ def train(
         "Train/Alpha": alpha
     }, step=epoch)
     
-    return model, optimizers
+    return model, optimizers, len(train_data)
 
 
 
