@@ -1,140 +1,100 @@
-# Default Configuration for NIDS Research Project
+# Default Configuration for MoMLNIDS Project
 
-# Project settings
 project:
-  name: "nids-research"
-  description: "Network Intrusion Detection System using Multi-domain Learning"
+  name: "MoMLNIDS_Default"
+  description: "Default configuration for Multi-Domain Network Intrusion Detection System"
   version: "1.0.0"
 
-# Experiment tracking
 wandb:
-  enabled: true
-  project: "nids-research"
-  entity: null  # Set your wandb username/team
-  tags: ["nids", "multi-domain", "cybersecurity"]
-  
-# Model configuration
+  enabled: True
+  project: "MoMLNIDS_Training"
+  entity: null # Replace with your W&B entity if applicable
+  tags: ["default"]
+
 model:
-  name: "MoMLNIDS"
+  name: "MoMLDNIDS"
   feature_extractor:
-    hidden_layers: [128, 64, 32]
+    hidden_layers: [64, 32, 16, 10]
     dropout_rate: 0.3
     activation: "ELU"
-    
   classifier:
-    hidden_layers: [64, 32]
-    num_classes: 2  # binary classification
-    dropout_rate: 0.2
-    
+    hidden_layers: [64, 32, 16]
+    num_classes: 2
+    dropout_rate: 0.25
   discriminator:
-    hidden_layers: [64, 32]
-    num_domains: 3  # number of datasets
-    dropout_rate: 0.2
+    hidden_layers: [64, 32, 16]
+    num_domains: 3 # Default, will be overridden by actual domain count
+    dropout_rate: 0.25
 
-# Training configuration
 training:
-  batch_size: 256
-  epochs: 30
-  learning_rate: 0.001
-  weight_decay: 1e-4
-  
-  # Multi-domain learning weights
-  domain_weight: 1.0
-  classification_weight: 1.0
-  
-  # Early stopping
+  batch_size: 1
+  epochs: 20
+  learning_rate: 0.0015
+  weight_decay: 0.0005
+  domain_weight: 1.0 # Placeholder, will be calculated
+  classification_weight: 1.0 # Placeholder, will be calculated
   early_stopping:
-    enabled: true
-    patience: 10
+    enabled: False
+    patience: 5
     min_delta: 0.001
-    
-  # Checkpoint saving
   checkpoint:
     save_every: 2
-    save_best: true
+    save_best: True
 
-# Data configuration
 data:
   datasets:
-    # - "NF-BoT-IoT-v2"
-    - "NF-CSE-CIC-IDS2018-v2" 
-    - "NF-ToN-IoT-v2"
     - "NF-UNSW-NB15-v2"
-    
-  # Data paths
-  raw_data_path: "skripsi_code/data/raw"
-  interim_data_path: "skripsi_code/data/interim"
-  processed_data_path: "skripsi_code/data/processed"
-  
-  # Preprocessing
+    - "NF-CSE-CIC-IDS2018-v2"
+    - "NF-ToN-IoT-v2"
+    - "NF-BoT-IoT-v2" # Added BoT-IoT for completeness
+  raw_data_path: "./data/raw/NIDS_DATA/"
+  interim_data_path: "./data/interim/"
+  processed_data_path: "./skripsi_code/data/parquet/" # This is the path to your parquet files
   preprocessing:
-    normalize: true
-    handle_missing: "drop"
-    feature_selection: false
-    
-  # Data splits
-  train_ratio: 0.7
-  val_ratio: 0.15
-  test_ratio: 0.15
-  
-  # Clustering configuration
+    normalize: True
+    handle_missing: True
+    feature_selection: False
+  data_splits:
+    train_ratio: 0.8
+    val_ratio: 0.1
+    test_ratio: 0.1
   clustering:
     method: "kmeans"
-    n_clusters: 10
+    n_clusters: 4
     random_state: 42
 
-# Evaluation configuration
 evaluation:
-  metrics:
-    - "accuracy"
-    - "precision"
-    - "recall"
-    - "f1_score"
-    - "auc_roc"
-    
-  # Cross-validation
+  metrics: ["accuracy", "f1_score", "precision", "recall", "auroc"]
   cross_validation:
-    enabled: false
+    enabled: False
     folds: 5
-    
-# Explainable AI configuration
+
 explainable_ai:
-  enabled: true
-  methods:
-    - "shap"
-    - "lime"
-    - "integrated_gradients"
-    
-  # Feature importance analysis
+  enabled: False
+  methods: ["integrated_gradients", "feature_ablation"]
   feature_importance:
-    enabled: true
-    top_k_features: 20
-    
-  # Visualization settings
+    enabled: True
+    top_k_features: 10
   visualization:
-    save_plots: true
+    save_plots: True
     plot_format: "png"
     dpi: 300
 
-# Logging configuration
 logging:
   level: "INFO"
   format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-  file: "logs/experiment.log"
-  
-# Output paths
-output:
-  models_dir: "models"
-  results_dir: "results" 
-  plots_dir: "plots"
-  logs_dir: "logs"
-  
-# Reproducibility
-random_seed: 42
-deterministic: true
+  file: "training.log"
 
-# Hardware configuration
+output:
+  models_dir: "./models/"
+  results_dir: "./results/"
+  plots_dir: "./plots/"
+  logs_dir: "./logs/"
+
+random_seed: 42
+deterministic: True
+
 device:
-  use_cuda: true
+  use_cuda: True
   cuda_device: 0
-  num_workers: 4
+  num_workers: 0 # Set to 0 for easier debugging, increase for performance

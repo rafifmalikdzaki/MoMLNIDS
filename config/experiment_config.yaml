@@ -1,45 +1,57 @@
-# Experiment Configuration
-experiment:
+# Experiment Configuration - Override specific values from default_config.yaml
+
+# Project settings (optional, will override default)
+project:
+  name: "MoMLNIDS_Experiment"
+
+# Wandb settings (optional, will override default)
+wandb:
+  enabled: True
+  tags: ["experiment", "pseudolabelling"]
+
+# Model configuration (optional, will override default)
+model:
+  feature_extractor:
+    hidden_layers: [64, 32, 16, 10]
+  classifier:
+    hidden_layers: [64, 32, 16]
+  discriminator:
+    hidden_layers: [64, 32, 16] # Assuming discriminator hidden layers are same as classifier for this experiment
+
+# Training configuration (optional, will override default)
+training:
+  batch_size: 1
+  epochs: 20
+  learning_rate: 0.0015
+  weight_decay: 0.0005
+  # domain_weight and classification_weight are calculated dynamically in the script
+  # based on domain_reweighting and label_reweighting from default_config.yaml
+  
+  # Parameters from original 'experiment' section
   verbose: False
   single_layer: True
   target_index: 0 # This will be iterated in main_config.py
-  batch_size: 1
   experiment_num: "|PseudoLabelling|"
-  num_epoch: 20
   eval_step: 1
   save_step: 2
-  init_learning_rate: 0.0015
-  classifier_weight: 1
-  discriminator_weight: 1
-  extractor_weight: 1
   entropy_weight: 1
   grl_weight: 1.25
   label_smooth: 0.1
-  weight_decay: 5e-4
   amsgrad: True
   t_max: 10
   num_clusters: 4
   num_classes: 2
   clustering_step: 2
-  data_path: "./skripsi_code/data/parquet/"
   input_nodes: 39
   use_cluster: True
   eval_batch_frequency: 10000
 
-domain_list:
-  - "NF-UNSW-NB15-v2"
-  - "NF-CSE-CIC-IDS2018-v2"
-  - "NF-ToN-IoT-v2"
-
-domain_reweighting:
-  - 23
-  - 187
-  - 169
-
-label_reweighting:
-  - [0.8735, 0.1265]
-  - [0.8307, 0.1693]
-  - [0.0356, 0.9644]
-
-hidden_nodes: [64, 32, 16, 10]
-class_nodes: [64, 32, 16]
+# Data configuration (optional, will override default)
+data:
+  processed_data_path: "./skripsi_code/data/parquet/" # Ensure this is correct
+  clustering:
+    method: "MiniK" # Changed from "kmeans" to "MiniK" as used in main.py
+  
+# Device configuration (optional, will override default)
+device:
+  num_workers: 0 # Set to 0 for easier debugging, increase for performance

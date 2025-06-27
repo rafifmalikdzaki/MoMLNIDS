@@ -60,9 +60,9 @@ data:
     - "NF-CSE-CIC-IDS2018-v2"  # Use only 2 datasets for quick testing
     
   # Data paths
-  raw_data_path: "skripsi_code/data/raw"
-  interim_data_path: "skripsi_code/data/interim"
-  processed_data_path: "skripsi_code/data/processed"
+  raw_data_path: "data/raw"
+  interim_data_path: "data/interim"
+  processed_data_path: "data/processed"
   
   # Preprocessing
   preprocessing:
@@ -71,9 +71,10 @@ data:
     feature_selection: false
     
   # Data splits
-  train_ratio: 0.8  # More training data
-  val_ratio: 0.1
-  test_ratio: 0.1
+  data_splits:
+    train_ratio: 0.8  # More training data
+    val_ratio: 0.1
+    test_ratio: 0.1
   
   # Clustering configuration
   clustering:
