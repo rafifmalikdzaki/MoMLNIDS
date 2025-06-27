@@ -117,13 +117,13 @@ Run the improved training script with full configuration management and experime
 
 ```bash
 # Run with default configuration
-python main_improved.py
+python main_config.py
 
 # Run with custom config file
-python main_improved.py --config config/custom_config.yaml
+python main_config.py --config config/custom_config.yaml
 
 # Run quick test with minimal setup
-python main_improved.py --config config/quick_test_config.yaml
+python main_config.py --config config/quick_test_config.yaml
 ```
 
 ✨ **Enhanced Features:**
@@ -225,7 +225,7 @@ skripsi_code/
 ├── 🔒 uv.lock                       # Locked dependencies
 ├── 🧪 test_imports.py                # Comprehensive import validation
 │
-├── 🎯 main_improved.py               # ✨ Enhanced training with MLOps
+├── 🎯 main_config.py               # ✨ Enhanced training with MLOps
 ├── 📜 main.py                        # Legacy: Source-only baseline
 ├── 📜 main_pseudo.py                 # Legacy: Pseudo-labeling experiments
 ├── 📜 main_pseudo_50.py              # Legacy: Extended training
