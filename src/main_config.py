@@ -59,7 +59,7 @@ if __name__ == "__main__":
     FEATURE_EXTRACTOR_ACTIVATION = config['model']['feature_extractor']['activation']
     CLASSIFIER_HIDDEN_LAYERS = config['model']['classifier']['hidden_layers']
     NUM_CLASSES = config['model']['classifier']['num_classes']
-    CLASSIFIER_DROPOUT_RATE = config['model']['classifier']['dropout_rate']
+    CLASSIFIER_DROPOUT_RATE = config.model.classifier['dropout_rate']
     DISCRIMINATOR_HIDDEN_LAYERS = config['model']['discriminator']['hidden_layers']
     NUM_DOMAINS = config['model']['discriminator']['num_domains']
     DISCRIMINATOR_DROPOUT_RATE = config['model']['discriminator']['dropout_rate']
