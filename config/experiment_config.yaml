@@ -6,7 +6,7 @@ project:
 
 # Wandb settings (optional, will override default)
 wandb:
-  enabled: True
+  enabled: False
   tags: ["experiment", "pseudolabelling"]
 
 # Model configuration (optional, will override default)
@@ -45,6 +45,7 @@ training:
   input_nodes: 39
   use_cluster: True
   eval_batch_frequency: 10000
+  gradient_clip_norm: 10000.0
 
 # Data configuration (optional, will override default)
 data:

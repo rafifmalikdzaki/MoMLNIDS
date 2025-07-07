@@ -6,7 +6,7 @@ project:
   version: "1.0.0"
 
 wandb:
-  enabled: True
+  enabled: False
   project: "MoMLNIDS_Training"
   entity: null # Replace with your W&B entity if applicable
   tags: ["default"]
@@ -40,6 +40,7 @@ training:
   checkpoint:
     save_every: 2
     save_best: True
+  gradient_clip_norm: 10000.0
 
 data:
   datasets:

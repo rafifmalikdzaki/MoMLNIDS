@@ -1,0 +1,48 @@
+# Baseline Configuration - Runs without Pseudo-Domain Labelling
+
+# Inherits from default_config.yaml, overrides specific values
+
+# Project settings
+project:
+  name: "MoMLNIDS_Baseline_Experiment"
+
+# Wandb settings
+wandb:
+  enabled: False
+  tags: ["baseline", "true-domain-label"]
+
+# Training configuration
+training:
+  batch_size: 1
+  epochs: 20
+  learning_rate: 0.0015
+  weight_decay: 0.0005
+  
+  # Parameters from original 'experiment' section
+  verbose: False
+  single_layer: True
+  target_index: 0 # This will be iterated
+  experiment_num: "|Baseline|"
+  eval_step: 1
+  save_step: 2
+  entropy_weight: 1.0
+  grl_weight: 1.25
+  label_smooth: 0.1
+  amsgrad: True
+  t_max: 10
+  input_nodes: 39
+  eval_batch_frequency: 10000
+  gradient_clip_norm: 10000.0
+  
+  # CRITICAL: Disable clustering to run baseline
+  use_cluster: False
+
+# Data configuration
+data:
+  processed_data_path: "./skripsi_code/data/parquet/"
+  clustering:
+    method: "none"
+
+# Device configuration
+device:
+  num_workers: 0

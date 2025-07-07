@@ -1,0 +1,44 @@
+project:
+  name: MoMLNIDS_Demo
+wandb:
+  enabled: false
+training:
+  batch_size: 1
+  epochs: 1
+  learning_rate: 0.001
+  target_index: 0
+  experiment_num: '|Demo|'
+  use_cluster: false
+  eval_step: 1
+  save_step: 1
+  max_batches: 5
+  extractor_weight: 1.0
+  classifier_weight: 1.0
+  discriminator_weight: 1.0
+  amsgrad: false
+  t_max: 10
+  clustering_step: 1
+  label_smooth: 0.0
+  entropy_weight: 0.0
+  grl_weight: 1.0
+  eval_batch_frequency: 1
+data:
+  processed_data_path: ./data/parquet/
+  domain_reweighting:
+  - 1.0
+  - 1.0
+  - 1.0
+  label_reweighting:
+  - - 1.0
+    - 1.0
+  - - 1.0
+    - 1.0
+  - - 1.0
+    - 1.0
+device:
+  num_workers: 0
+model:
+  input_nodes: 39
+  single_layer: true
+logging:
+  verbose: true
