@@ -149,7 +149,7 @@ def test_random_split_dataloader(dummy_parquet_data):
     # Test data types and shapes for a batch
     assert train_features.dtype == torch.float32
     assert train_labels.dtype == torch.int64
-    assert train_features.ndim == 2 # (batch_size, num_features)
-    assert train_labels.ndim == 1 # (batch_size,)
-    assert train_domain.ndim == 1 # (batch_size,)
-    assert train_cluster.ndim == 1 # (batch_size,)
+    assert train_features.ndim == 3 # (batch_size, chunk_size, num_features)
+    assert train_labels.ndim == 2 # (batch_size,)
+    assert train_domain.ndim == 2 # (batch_size,)
+    assert train_cluster.ndim == 2 # (batch_size,)

@@ -1,6 +1,8 @@
 # Byte-compiled / optimized / DLL files
 
 **/*/wandb/
+lap_skripsi/
+
 
 __pycache__/
 *.py[cod]

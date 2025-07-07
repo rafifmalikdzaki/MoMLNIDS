@@ -6,6 +6,21 @@ Smoke test to verify that all imports work and basic functionality is available.
 import sys
 import traceback
 from pathlib import Path
+from collections import Counter # Corrected typo: Collections -> collections
+
+from rich.console import Console
+from rich.theme import Theme
+
+# Define a custom theme for better output
+custom_theme = Theme({
+    "success": "green",
+    "failure": "red",
+    "info": "blue",
+    "warning": "yellow",
+    "header": "bold magenta",
+    "test_name": "bold cyan",
+})
+console = Console(theme=custom_theme)
 
 project_root = Path(__file__).resolve().parents[2]
 if str(project_root / "src") not in sys.path:
@@ -13,47 +28,47 @@ if str(project_root / "src") not in sys.path:
 
 def test_imports():
     """Test that all major modules can be imported successfully."""
-    print("Testing imports...")
+    console.print("[header]Testing imports...[/header]")
     
     try:
         # Core torch imports
         import torch
         import torch.nn as nn
-        print("✓ PyTorch imports successful")
+        console.print("[success]✓ PyTorch imports successful[/success]")
         
         # Model imports
         from skripsi_code.model.MoMLNIDS import momlnids
         from skripsi_code.model.FeatureExtractor import DGFeatExt
         from skripsi_code.model.Discriminator import DomainDiscriminator
         from skripsi_code.model.Classifier import ClassifierANN
-        print("✓ Model imports successful")
+        console.print("[success]✓ Model imports successful[/success]")
         
         # Utils imports
         from skripsi_code.utils.dataloader import random_split_dataloader
         from skripsi_code.utils.domain_dataset import MultiChunkParquet, MultiChunkDataset, Whole_Dataset
         from skripsi_code.utils.loss import EntropyLoss, MaximumSquareLoss
         from skripsi_code.utils.utils import get_optimizer, get_learning_rate_scheduler
-        print("✓ Utils imports successful")
+        console.print("[success]✓ Utils imports successful[/success]")
         
         # Clustering imports  
         from skripsi_code.clustering.cluster_utils import pseudolabeling
         from skripsi_code.clustering.cluster_methods import MiniK, Kmeans, GMM, Spectral, Agglomerative
-        print("✓ Clustering imports successful")
+        console.print("[success]✓ Clustering imports successful[/success]")
         
         # Training imports
         from skripsi_code.TrainEval.TrainEval import train, eval
-        print("✓ TrainEval imports successful")
+        console.print("[success]✓ TrainEval imports successful[/success]")
         
         return True
         
     except Exception as e:
-        print(f"✗ Import failed: {e}")
+        console.print(f"[failure]✗ Import failed: {e}[/failure]")
         traceback.print_exc()
         return False
 
 def test_basic_model():
     """Test that the basic model can be instantiated and run a forward pass."""
-    print("\nTesting basic model instantiation...")
+    console.print("\n[header]Testing basic model instantiation...[/header]")
     
     try:
         import torch
@@ -61,7 +76,7 @@ def test_basic_model():
         
         # Create a small test tensor
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        print(f"Using device: {device}")
+        console.print(f"[info]Using device: {device}[/info]")
         
         # Create test data
         x = torch.randn(10, 43).to(device)  # Small batch for testing
@@ -75,34 +90,34 @@ def test_basic_model():
             num_class=2,
         ).to(device)
         
-        print("✓ Model instantiated successfully")
+        console.print("[success]✓ Model instantiated successfully[/success]")
         
         # Test forward pass
         model.eval()
         with torch.no_grad():
             class_output, domain_output = model(x)
             
-        print(f"✓ Forward pass successful")
-        print(f"  - Class output shape: {class_output.shape}")
-        print(f"  - Domain output shape: {domain_output.shape}")
+        console.print(f"[success]✓ Forward pass successful[/success]")
+        console.print(f"  [info]- Class output shape: {class_output.shape}[/info]")
+        console.print(f"  [info]- Domain output shape: {domain_output.shape}[/info]")
         
         return True
         
     except Exception as e:
-        print(f"✗ Model test failed: {e}")
+        console.print(f"[failure]✗ Model test failed: {e}[/failure]")
         traceback.print_exc()
         return False
 
 def test_data_loading():
     """Test basic data loading functionality."""
-    print("\nTesting data loading components...")
+    console.print("\n[header]Testing data loading components...[/header]")
     
     try:
         # Test if we can import and create basic data structures
         from skripsi_code.utils.dataloader import random_split_dataloader
         from skripsi_code.utils.utils import split_domain
         
-        print("✓ Data loading components imported successfully")
+        console.print("[success]✓ Data loading components imported successfully[/success]")
         
         # Define parameters similar to main.py
         DOMAIN_LIST = [
@@ -117,7 +132,7 @@ def test_data_loading():
         USE_DOMAIN = not USE_CLUSTER
         DATA_PATH = str(project_root / "data" / "parquet")
 
-        print(f"Attempting to load data from: {DATA_PATH}")
+        console.print(f"[info]Attempting to load data from: {DATA_PATH}[/info]")
         
         source_domain, target_domain = split_domain(DOMAIN_LIST, TARGET_INDEX)
 
@@ -134,25 +149,25 @@ def test_data_loading():
             n_workers=0,
         )
         
-        print("✓ Dataloaders initialized successfully")
+        console.print("[success]✓ Dataloaders initialized successfully[/success]")
 
         # Verify dataloaders are not empty
         if len(source_train.dataset) > 0 and len(source_val.dataset) > 0 and len(target_test.dataset) > 0:
-            print(f"✓ Data loaded successfully. Source train samples: {len(source_train.dataset)}, Source val samples: {len(source_val.dataset)}, Target test samples: {len(target_test.dataset)}")
+            console.print(f"[success]✓ Data loaded successfully. Source train samples: {len(source_train.dataset)}, Source val samples: {len(source_val.dataset)}, Target test samples: {len(target_test.dataset)}[/success]")
         else:
-            print("✗ One or more datasets are empty.")
+            console.print("[failure]✗ One or more datasets are empty.[/failure]")
             return False
             
         return True
         
     except Exception as e:
-        print(f"✗ Data loading test failed: {e}")
+        console.print(f"[failure]✗ Data loading test failed: {e}[/failure]")
         traceback.print_exc()
         return False
 
 def test_clustering_utils():
     """Test basic clustering utilities functionality."""
-    print("\nTesting clustering utilities...")
+    console.print("\n[header]Testing clustering utilities...[/header]")
 
     try:
         import torch
@@ -176,7 +191,7 @@ def test_clustering_utils():
                 return self.features[idx], self.domain_label[idx], self.cluster_label[idx]
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        print(f"Using device: {device}")
+        console.print(f"[info]Using device: {device}[/info]")
 
         # Create dummy model
         model = momlnids(
@@ -197,7 +212,7 @@ def test_clustering_utils():
             log_file_path.unlink()
 
         # Call pseudolabeling
-        print("Calling pseudolabeling...")
+        console.print("[info]Calling pseudolabeling...[/info]")
         new_cluster_labels = pseudolabeling(
             dataset=dummy_dataset,
             model=model,
@@ -214,20 +229,21 @@ def test_clustering_utils():
         # Assertions
         assert isinstance(new_cluster_labels, np.ndarray)
         assert len(new_cluster_labels) == len(dummy_dataset)
-        print("✓ Pseudolabeling executed successfully and returned expected type.")
+        console.print("[success]✓ Pseudolabeling executed successfully and returned expected type.[/success]")
 
         return True
 
     except Exception as e:
-        print(f"✗ Clustering utilities test failed: {e}")
+        console.print(f"[failure]✗ Clustering utilities test failed: {e}[/failure]")
         traceback.print_exc()
         return False
 
 
+
 def main():
     """Run all smoke tests."""
-    print("🔥 Running smoke tests for skripsi_code project...")
-    print("=" * 50)
+    console.print("[header]🔥 Running smoke tests for skripsi_code project...[/header]")
+    console.print("[header]=" * 50 + "[/header]")
     
     success_count = 0
     total_tests = 4 # Updated total tests
@@ -245,14 +261,14 @@ def main():
     if test_clustering_utils(): # New test
         success_count += 1
     
-    print("\n" + "=" * 50)
-    print(f"Smoke test results: {success_count}/{total_tests} tests passed")
+    console.print("\n" + "[header]=" * 50 + "[/header]")
+    console.print(f"[header]Smoke test results: {success_count}/{total_tests} tests passed[/header]")
     
     if success_count == total_tests:
-        print("🎉 All smoke tests passed! The environment is ready.")
+        console.print("[success]🎉 All smoke tests passed! The environment is ready.[/success]")
         return 0
     else:
-        print("❌ Some tests failed. Check the output above for details.")
+        console.print("[failure]❌ Some tests failed. Check the output above for details.[/failure]")
         return 1
 
 if __name__ == "__main__":
