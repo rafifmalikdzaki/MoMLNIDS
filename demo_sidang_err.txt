@@ -1,0 +1,191 @@
+--- 2025-07-07T16:35:29.141473 ---
+ERROR: Command failed: Running Python imports
+DETAILS:
+  Command: python src/tests/test_imports.py
+  Output:
+  Traceback (most recent call last):
+  File "/home/dzakirm/Research/MoMLNIDS/src/tests/test_imports.py", line 28, in test_core_package_imports
+  import skripsi_code
+  ModuleNotFoundError: No module named 'skripsi_code'
+  Traceback (most recent call last):
+  File "/home/dzakirm/Research/MoMLNIDS/src/tests/test_imports.py", line 43, in test_config_module
+  from skripsi_code.config import Config, ConfigManager, get_config, load_config
+  ModuleNotFoundError: No module named 'skripsi_code'
+  Traceback (most recent call last):
+  File "/home/dzakirm/Research/MoMLNIDS/src/tests/test_imports.py", line 62, in test_experiment_module
+  from skripsi_code.experiment import ExperimentTracker, MetricsLogger
+  ModuleNotFoundError: No module named 'skripsi_code'
+  Traceback (most recent call last):
+  File "/home/dzakirm/Research/MoMLNIDS/src/tests/test_imports.py", line 87, in test_explainability_module
+  from skripsi_code.explainability import ModelExplainer
+  ModuleNotFoundError: No module named 'skripsi_code'
+  Running import validation tests...
+  
+  
+  --- Basic imports ---
+  ✓ Basic imports successful
+  
+  --- Core package imports ---
+  ✗ Core package imports failed: No module named 'skripsi_code'
+  
+  --- Configuration module ---
+  ✗ Configuration module failed: No module named 'skripsi_code'
+  
+  --- Experiment tracking module ---
+  ✗ Experiment tracking module failed: No module named 'skripsi_code'
+  
+  --- Explainable AI module ---
+  ✗ Explainable AI module failed: No module named 'skripsi_code'
+  
+  --- Configuration files ---
+  ✓ config/default_config.yaml is valid
+  ✓ config/quick_test_config.yaml is valid
+  
+  --- Optional dependencies ---
+  ✓ SHAP available
+  ✓ LIME available
+  ✓ wandb available
+  
+  ==================================================
+  IMPORT TEST SUMMARY
+  ==================================================
+  Basic imports: PASS
+  Core package imports: FAIL
+  Configuration module: FAIL
+  Experiment tracking module: FAIL
+  Explainable AI module: FAIL
+  Configuration files: FAIL
+  
+  Optional dependencies:
+  shap: Available
+  lime: Available
+  wandb: Available
+  
+  ❌ 5 test(s) failed:
+  - Core package imports
+  - Configuration module
+  - Experiment tracking module
+  - Explainable AI module
+  - Configuration files
+
+--- 2025-07-07T16:35:30.243952 ---
+ERROR: Command failed: Running Smoke test
+DETAILS:
+  Command: python src/tests/smoke_test.py
+  Output:
+  Traceback (most recent call last):
+  File "/home/dzakirm/Research/MoMLNIDS/src/tests/smoke_test.py", line 21, in test_imports
+  from skripsi_code.model.MoMLNIDS import MoMLDNIDS
+  ModuleNotFoundError: No module named 'skripsi_code'
+  Traceback (most recent call last):
+  File "/home/dzakirm/Research/MoMLNIDS/src/tests/smoke_test.py", line 56, in test_basic_model
+  from skripsi_code.model.MoMLNIDS import MoMLDNIDS
+  ModuleNotFoundError: No module named 'skripsi_code'
+  Traceback (most recent call last):
+  File "/home/dzakirm/Research/MoMLNIDS/src/tests/smoke_test.py", line 98, in test_data_loading
+  from skripsi_code.utils.domain_dataset import MultiChunkParquet, MultiChunkDataset, Whole_Dataset
+  ModuleNotFoundError: No module named 'skripsi_code'
+  🔥 Running smoke tests for skripsi_code project...
+  ==================================================
+  Testing imports...
+  ✓ PyTorch imports successful
+  ✗ Import failed: No module named 'skripsi_code'
+  
+  Testing basic model instantiation...
+  ✗ Model test failed: No module named 'skripsi_code'
+  
+  Testing data loading components...
+  ✗ Data loading test failed: No module named 'skripsi_code'
+  Traceback (most recent call last):
+  File "/home/dzakirm/Research/MoMLNIDS/src/tests/smoke_test.py", line 98, in test_data_loading
+  from skripsi_code.utils.domain_dataset import MultiChunkParquet, MultiChunkDataset, Whole_Dataset
+  ModuleNotFoundError: No module named 'skripsi_code'
+  
+  During handling of the above exception, another exception occurred:
+  
+  Traceback (most recent call last):
+  File "/home/dzakirm/Research/MoMLNIDS/src/tests/smoke_test.py", line 142, in <module>
+  sys.exit(main())
+  File "/home/dzakirm/Research/MoMLNIDS/src/tests/smoke_test.py", line 128, in main
+  if test_data_loading():
+  File "/home/dzakirm/Research/MoMLNIDS/src/tests/smoke_test.py", line 111, in test_data_loading
+  assert False
+  AssertionError
+
+--- 2025-07-07T16:35:37.286669 ---
+ERROR: Command failed: Testing explainability features
+DETAILS:
+  Command: python temp_explainability_test.py
+  Output:
+  Traceback (most recent call last):
+  File "/home/dzakirm/Research/MoMLNIDS/temp_explainability_test.py", line 23, in <module>
+  explanation = explainer.explain_instance(test_instance, method='feature_ablation')
+  File "/home/dzakirm/Research/MoMLNIDS/src/skripsi_code/explainability/explainer.py", line 59, in explain_instance
+  return self._feature_ablation_explanation(instance, **kwargs)
+  File "/home/dzakirm/Research/MoMLNIDS/src/skripsi_code/explainability/explainer.py", line 212, in _feature_ablation_explanation
+  original_output = self.model(instance_tensor)
+  File "/home/dzakirm/Research/MoMLNIDS/sk_kc/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+  return self._call_impl(*args, **kwargs)
+  File "/home/dzakirm/Research/MoMLNIDS/sk_kc/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+  return forward_call(*args, **kwargs)
+  File "/home/dzakirm/Research/MoMLNIDS/src/skripsi_code/model/MoMLNIDS.py", line 34, in forward
+  invariant_features = self.FeatureExtractorLayer(x)
+  File "/home/dzakirm/Research/MoMLNIDS/sk_kc/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+  return self._call_impl(*args, **kwargs)
+  File "/home/dzakirm/Research/MoMLNIDS/sk_kc/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+  return forward_call(*args, **kwargs)
+  File "/home/dzakirm/Research/MoMLNIDS/src/skripsi_code/model/FeatureExtractor.py", line 35, in forward
+  x = self.norm(x)
+  File "/home/dzakirm/Research/MoMLNIDS/sk_kc/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+  return self._call_impl(*args, **kwargs)
+  File "/home/dzakirm/Research/MoMLNIDS/sk_kc/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+  return forward_call(*args, **kwargs)
+  File "/home/dzakirm/Research/MoMLNIDS/sk_kc/lib/python3.10/site-packages/torch/nn/modules/batchnorm.py", line 193, in forward
+  return F.batch_norm(
+  File "/home/dzakirm/Research/MoMLNIDS/sk_kc/lib/python3.10/site-packages/torch/nn/functional.py", line 2822, in batch_norm
+  return torch.batch_norm(
+  RuntimeError: mixed dtype (CPU): expect parameter to have scalar type of Float
+
+--- 2025-07-07T16:35:37.288983 ---
+ERROR: Explainability test failed
+DETAILS:
+  Output:
+  Traceback (most recent call last):
+  File "/home/dzakirm/Research/MoMLNIDS/temp_explainability_test.py", line 23, in <module>
+  explanation = explainer.explain_instance(test_instance, method='feature_ablation')
+  File "/home/dzakirm/Research/MoMLNIDS/src/skripsi_code/explainability/explainer.py", line 59, in explain_instance
+  return self._feature_ablation_explanation(instance, **kwargs)
+  File "/home/dzakirm/Research/MoMLNIDS/src/skripsi_code/explainability/explainer.py", line 212, in _feature_ablation_explanation
+  original_output = self.model(instance_tensor)
+  File "/home/dzakirm/Research/MoMLNIDS/sk_kc/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+  return self._call_impl(*args, **kwargs)
+  File "/home/dzakirm/Research/MoMLNIDS/sk_kc/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+  return forward_call(*args, **kwargs)
+  File "/home/dzakirm/Research/MoMLNIDS/src/skripsi_code/model/MoMLNIDS.py", line 34, in forward
+  invariant_features = self.FeatureExtractorLayer(x)
+  File "/home/dzakirm/Research/MoMLNIDS/sk_kc/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+  return self._call_impl(*args, **kwargs)
+  File "/home/dzakirm/Research/MoMLNIDS/sk_kc/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+  return forward_call(*args, **kwargs)
+  File "/home/dzakirm/Research/MoMLNIDS/src/skripsi_code/model/FeatureExtractor.py", line 35, in forward
+  x = self.norm(x)
+  File "/home/dzakirm/Research/MoMLNIDS/sk_kc/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+  return self._call_impl(*args, **kwargs)
+  File "/home/dzakirm/Research/MoMLNIDS/sk_kc/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+  return forward_call(*args, **kwargs)
+  File "/home/dzakirm/Research/MoMLNIDS/sk_kc/lib/python3.10/site-packages/torch/nn/modules/batchnorm.py", line 193, in forward
+  return F.batch_norm(
+  File "/home/dzakirm/Research/MoMLNIDS/sk_kc/lib/python3.10/site-packages/torch/nn/functional.py", line 2822, in batch_norm
+  return torch.batch_norm(
+  RuntimeError: mixed dtype (CPU): expect parameter to have scalar type of Float
+
+--- 2025-07-07T16:35:38.408961 ---
+ERROR: Command failed: Running quick training
+DETAILS:
+  Command: python src/main_config.py --config config/quick_demo_config.yaml
+  Output:
+  Traceback (most recent call last):
+  File "/home/dzakirm/Research/MoMLNIDS/src/main_config.py", line 6, in <module>
+  from src.skripsi_code.utils.utils import (
+  ModuleNotFoundError: No module named 'src'
+

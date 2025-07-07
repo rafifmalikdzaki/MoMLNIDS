@@ -1,0 +1,18 @@
+project:
+  name: MoMLNIDS_Demo
+wandb:
+  enabled: false
+training:
+  batch_size: 16
+  epochs: 1
+  learning_rate: 0.001
+  target_index: 0
+  experiment_num: '|Demo|'
+  use_cluster: false
+  eval_step: 1
+  save_step: 1
+  max_batches: 5
+data:
+  processed_data_path: ./src/skripsi_code/data/parquet/
+device:
+  num_workers: 0

@@ -6,6 +6,10 @@ This is used in CI to ensure the enhanced features work correctly.
 
 import sys
 import traceback
+import os
+
+print(f"sys.path: {sys.path}")
+print(f"PYTHONPATH: {os.environ.get('PYTHONPATH')}")
 
 
 def test_basic_imports():
@@ -40,7 +44,7 @@ def test_core_package_imports():
 def test_config_module():
     """Test configuration module."""
     try:
-        from skripsi_code.config import Config, ConfigManager, get_config, load_config
+        from skripsi_code.config import ConfigManager, get_config, load_config
         
         # Test basic config loading
         config = get_config()
@@ -160,23 +164,26 @@ def test_config_files():
     try:
         import yaml
         from pathlib import Path
+
+        project_root = Path(__file__).resolve().parents[2]
         
         config_files = [
-            "config/default_config.yaml",
-            "config/quick_test_config.yaml"
+            project_root / "config/default_config.yaml",
+            project_root / "config/quick_test_config.yaml"
         ]
         
+        all_found = True
         for config_file in config_files:
-            path = Path(config_file)
-            if path.exists():
-                with open(path, 'r') as f:
+            if config_file.exists():
+                with open(config_file, 'r') as f:
                     config = yaml.safe_load(f)
                 assert isinstance(config, dict)
-                print(f"✓ {config_file} is valid")
+                print(f"✓ {config_file.name} is valid")
             else:
-                print(f"○ {config_file} not found")
+                print(f"✗ {config_file.name} not found")
+                all_found = False
         
-        assert True
+        return all_found
     except Exception as e:
         print(f"✗ Config file validation failed: {e}")
         assert False
