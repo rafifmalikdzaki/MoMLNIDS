@@ -1,8 +1,18 @@
 import wandb
 from torch import nn
-from src.skripsi_code.utils.loss import EntropyLoss, MaximumSquareLoss
+from skripsi_code.utils.loss import EntropyLoss, MaximumSquareLoss
 import torch
-from torchmetrics import F1Score, Precision, Recall, ROC, AUROC, AveragePrecision, MatthewsCorrCoef, ConfusionMatrix, Specificity
+from torchmetrics import (
+    F1Score,
+    Precision,
+    Recall,
+    ROC,
+    AUROC,
+    AveragePrecision,
+    MatthewsCorrCoef,
+    ConfusionMatrix,
+    Specificity,
+)
 import numpy as np
 import matplotlib.pyplot as plt
 from torch.cuda.amp import autocast, GradScaler
@@ -42,6 +52,9 @@ def train(
     label_smooth=None,
     entropy_weight=1.0,
     grl_weight=1.0,
+    max_batches=None,
+    wandb_enabled=False,
+    clip_grad_norm=None,
 ):
     scaler = GradScaler()
 
@@ -74,26 +87,51 @@ def train(
 
     data_size = 0
 
-    num_classes = model.ClassClassifier.output_dim # Assuming this is how to get num_classes
-    
+    num_classes = (
+        model.LabelClassifier.output_nodes
+    )  # Assuming this is how to get num_classes
+
     # Initialize TorchMetrics for training
-    f1_metric_train = F1Score(task="multiclass", num_classes=num_classes, average="weighted").to(device)
-    precision_metric_train = Precision(task="multiclass", num_classes=num_classes, average="weighted").to(device)
-    recall_metric_train = Recall(task="multiclass", num_classes=num_classes, average="weighted").to(device)
-    auroc_metric_train = AUROC(task="multiclass", num_classes=num_classes, average="weighted").to(device)
-    avg_precision_metric_train = AveragePrecision(task="multiclass", num_classes=num_classes, average="weighted").to(device)
-    mcc_metric_train = MatthewsCorrCoef(task="multiclass", num_classes=num_classes).to(device)
-    sensitivity_metric_train = Recall(task="multiclass", num_classes=num_classes, average="weighted").to(device) # Sensitivity is Recall
-    specificity_metric_train = Specificity(task="multiclass", num_classes=num_classes, average="weighted").to(device)
-    conf_matrix_train = ConfusionMatrix(task="multiclass", num_classes=num_classes).to(device)
+    f1_metric_train = F1Score(
+        task="multiclass", num_classes=num_classes, average="weighted"
+    ).to(device)
+    precision_metric_train = Precision(
+        task="multiclass", num_classes=num_classes, average="weighted"
+    ).to(device)
+    recall_metric_train = Recall(
+        task="multiclass", num_classes=num_classes, average="weighted"
+    ).to(device)
+    auroc_metric_train = AUROC(
+        task="multiclass", num_classes=num_classes, average="weighted"
+    ).to(device)
+    avg_precision_metric_train = AveragePrecision(
+        task="multiclass", num_classes=num_classes, average="weighted"
+    ).to(device)
+    mcc_metric_train = MatthewsCorrCoef(task="multiclass", num_classes=num_classes).to(
+        device
+    )
+    sensitivity_metric_train = Recall(
+        task="multiclass", num_classes=num_classes, average="weighted"
+    ).to(device)  # Sensitivity is Recall
+    specificity_metric_train = Specificity(
+        task="multiclass", num_classes=num_classes, average="weighted"
+    ).to(device)
+    conf_matrix_train = ConfusionMatrix(task="multiclass", num_classes=num_classes).to(
+        device
+    )
 
     all_labels_tensor = torch.tensor([], dtype=torch.long, device=device)
     all_predictions_tensor = torch.tensor([], dtype=torch.long, device=device)
     all_predictions_proba_tensor = torch.tensor([], dtype=torch.float, device=device)
 
+    batch_count = 0
     for data, class_label, domain_label in train_data:
+        # Break if max_batches limit is reached
+        if max_batches is not None and batch_count >= max_batches:
+            break
+        batch_count += 1
         data, class_label, domain_label = (
-            data.double().to(device),
+            data.squeeze().double().to(device),
             class_label.squeeze().long().to(device),
             domain_label.squeeze().long().to(device),
         )
@@ -134,7 +172,12 @@ def train(
 
         all_labels_tensor = torch.cat((all_labels_tensor, class_label))
         all_predictions_tensor = torch.cat((all_predictions_tensor, pred_class))
-        all_predictions_proba_tensor = torch.cat((all_predictions_proba_tensor, torch.nn.functional.softmax(output_class, dim=1)))
+        all_predictions_proba_tensor = torch.cat(
+            (
+                all_predictions_proba_tensor,
+                torch.nn.functional.softmax(output_class, dim=1),
+            )
+        )
 
         f1_metric_train.update(pred_class, class_label)
         precision_metric_train.update(pred_class, class_label)
@@ -192,29 +235,47 @@ def train(
 
     with open(filename, "a") as f:
         f.write(log + "\n")
-    
-    wandb.log({
-        "Train/Loss_Class": epoch_loss_class,
-        "Train/Acc_Class": epoch_acc_class,
-        "Train/Loss_Domain": epoch_loss_domain,
-        "Train/Acc_Domain": epoch_acc_domain,
-        "Train/Loss_Entropy": epoch_loss_entropy,
-        "Train/F1_Score": f1_train,
-        "Train/Precision": precision_train,
-        "Train/Recall": recall_train,
-        "Train/AUROC": auroc_train,
-        "Train/Average_Precision": avg_precision_train,
-        "Train/MCC": mcc_train,
-        "Train/Sensitivity": sensitivity_train,
-        "Train/Specificity": specificity_train,
-        "Train/Alpha": alpha
-    }, step=epoch)
-    
-    return model, optimizers, len(train_data)
+
+    if wandb_enabled:
+        wandb.log(
+            {
+                "Train/Loss_Class": epoch_loss_class,
+                "Train/Acc_Class": epoch_acc_class,
+                "Train/Loss_Domain": epoch_loss_domain,
+                "Train/Acc_Domain": epoch_acc_domain,
+                "Train/Loss_Entropy": epoch_loss_entropy,
+                "Train/F1_Score": f1_train,
+                "Train/Precision": precision_train,
+                "Train/Recall": recall_train,
+                "Train/AUROC": auroc_train,
+                "Train/Average_Precision": avg_precision_train,
+                "Train/MCC": mcc_train,
+                "Train/Sensitivity": sensitivity_train,
+                "Train/Specificity": specificity_train,
+                "Train/Alpha": alpha,
+            },
+            step=epoch,
+        )
+
+    # Return actual number of batches processed (considering max_batches limit)
+    actual_batches = (
+        min(len(train_data), max_batches)
+        if max_batches is not None
+        else len(train_data)
+    )
+    return model, optimizers, actual_batches
 
 
-
-def eval(model, eval_data, device, epoch, filename):
+def eval(
+    model,
+    eval_data,
+    criterion,
+    device,
+    num_epoch,
+    filename,
+    wandb_enabled=False,
+    epoch=0,
+):
     criterion = nn.CrossEntropyLoss()
 
     model.eval()
@@ -222,22 +283,38 @@ def eval(model, eval_data, device, epoch, filename):
     running_corrects = 0
     data_size = 0
 
-    all_labels = torch.tensor([], dtype=torch.long, device=device)
-    all_predictions = torch.tensor([], dtype=torch.long, device=device)
-    all_predictions_proba = torch.tensor([], dtype=torch.float, device=device)
+    
 
-    num_classes = output.shape[1]
+    num_classes = model.LabelClassifier.output_nodes
 
     # Initialize TorchMetrics for evaluation
-    f1_metric_eval = F1Score(task="multiclass", num_classes=num_classes, average="weighted").to(device)
-    precision_metric_eval = Precision(task="multiclass", num_classes=num_classes, average="weighted").to(device)
-    recall_metric_eval = Recall(task="multiclass", num_classes=num_classes, average="weighted").to(device)
-    auroc_metric_eval = AUROC(task="multiclass", num_classes=num_classes, average="weighted").to(device)
-    avg_precision_metric_eval = AveragePrecision(task="multiclass", num_classes=num_classes, average="weighted").to(device)
-    mcc_metric_eval = MatthewsCorrCoef(task="multiclass", num_classes=num_classes).to(device)
-    sensitivity_metric_eval = Recall(task="multiclass", num_classes=num_classes, average="weighted").to(device) # Sensitivity is Recall
-    specificity_metric_eval = Specificity(task="multiclass", num_classes=num_classes, average="weighted").to(device)
-    conf_matrix_eval = ConfusionMatrix(task="multiclass", num_classes=num_classes).to(device)
+    f1_metric_eval = F1Score(
+        task="multiclass", num_classes=num_classes, average="weighted"
+    ).to(device)
+    precision_metric_eval = Precision(
+        task="multiclass", num_classes=num_classes, average="weighted"
+    ).to(device)
+    recall_metric_eval = Recall(
+        task="multiclass", num_classes=num_classes, average="weighted"
+    ).to(device)
+    auroc_metric_eval = AUROC(
+        task="multiclass", num_classes=num_classes, average="weighted"
+    ).to(device)
+    avg_precision_metric_eval = AveragePrecision(
+        task="multiclass", num_classes=num_classes, average="weighted"
+    ).to(device)
+    mcc_metric_eval = MatthewsCorrCoef(task="multiclass", num_classes=num_classes).to(
+        device
+    )
+    sensitivity_metric_eval = Recall(
+        task="multiclass", num_classes=num_classes, average="weighted"
+    ).to(device)  # Sensitivity is Recall
+    specificity_metric_eval = Specificity(
+        task="multiclass", num_classes=num_classes, average="weighted"
+    ).to(device)
+    conf_matrix_eval = ConfusionMatrix(task="multiclass", num_classes=num_classes).to(
+        device
+    )
 
     with torch.inference_mode():
         for data, labels, *_ in eval_data:
@@ -256,9 +333,8 @@ def eval(model, eval_data, device, epoch, filename):
             running_corrects += torch.sum(prediction == labels.data).item()
             data_size += data.size(0)
 
-            all_labels.extend(labels.data)
-            all_predictions.extend(prediction)
             
+
             f1_metric_eval.update(prediction, labels)
             precision_metric_eval.update(prediction, labels)
             recall_metric_eval.update(prediction, labels)
@@ -294,26 +370,23 @@ def eval(model, eval_data, device, epoch, filename):
         f.write(log + "\n")
 
     # Log metrics to wandb
-    wandb.log({
-        "Val/Loss": epoch_loss,
-        "Val/Accuracy": epoch_acc,
-        "Val/F1_Score": f1_eval,
-        "Val/Precision": precision_eval,
-        "Val/Recall": recall_eval,
-        "Val/AUROC": auroc_eval,
-        "Val/Average_Precision": avg_precision_eval,
-        "Val/MCC": mcc_eval,
-        "Val/Sensitivity": sensitivity_eval,
-        "Val/Specificity": specificity_eval
-    }, step=epoch)
+    if wandb_enabled:
+        wandb.log(
+            {
+                "Val/Loss": epoch_loss,
+                "Val/Accuracy": epoch_acc,
+                "Val/F1_Score": f1_eval,
+                "Val/Precision": precision_eval,
+                "Val/Recall": recall_eval,
+                "Val/AUROC": auroc_eval,
+                "Val/Average_Precision": avg_precision_eval,
+                "Val/MCC": mcc_eval,
+                "Val/Sensitivity": sensitivity_eval,
+                "Val/Specificity": specificity_eval,
+            },
+            step=epoch,
+        )
 
-    # Log ROC Curve
-    wandb.log({"Val/ROC_Curve": wandb.plot.roc_curve(y_true=torch.cat(all_labels).cpu(), y_probas=torch.cat(all_predictions_proba).cpu(), labels=[str(i) for i in range(num_classes)])}, step=epoch)
-
-    # Log PR Curve
-    wandb.log({"Val/PR_Curve": wandb.plot.pr_curve(y_true=torch.cat(all_labels).cpu(), y_probas=torch.cat(all_predictions_proba).cpu(), labels=[str(i) for i in range(num_classes)])}, step=epoch)
-
-    # Log Confusion Matrix
-    wandb.log({"Val/Confusion_Matrix": wandb.plot.confusion_matrix(preds=torch.cat(all_predictions).cpu(), y_true=torch.cat(all_labels).cpu(), class_names=[str(i) for i in range(num_classes)])}, step=epoch)
+        
 
     return epoch_acc

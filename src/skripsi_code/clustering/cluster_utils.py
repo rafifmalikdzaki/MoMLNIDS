@@ -6,7 +6,8 @@ from scipy.optimize import linear_sum_assignment
 import numpy.typing as npt
 from typing import Literal, List
 from torch import Tensor
-from src.skripsi_code.clustering import cluster_methods
+import wandb
+from skripsi_code.clustering.cluster_methods import MiniK, Kmeans, GMM, Spectral, Agglomerative
 from tqdm import tqdm
 
 
@@ -127,7 +128,7 @@ def pseudolabeling(
     whitening: bool = False,
     L2norm: bool = False,
 ) -> npt.NDArray[np.int64]:
-    cluster_object = cluster_methods.__dict__[method](
+    cluster_object = globals()[method](
         n_clusters, reduced_dimentions, whitening, L2norm
     )
 
@@ -163,12 +164,12 @@ def pseudolabeling(
         with open(log_file, "a") as f:
             f.write(log + "\n")
 
-    import wandb
-    wandb.log({
-        "Clustering/NMI_Class": class_nmi,
-        "Clustering/NMI_Domain": domain_nmi,
-        "Clustering/NMI_Previous": previous_nmi
-    }, step=epoch)
+    if wandb.run is not None:
+        wandb.log({
+            "Clustering/NMI_Class": class_nmi,
+            "Clustering/NMI_Domain": domain_nmi,
+            "Clustering/NMI_Previous": previous_nmi
+        }, step=epoch)
 
     # Get the mapping e.g: [1, 0, 3, 2] memiliki arti bahwa cluster 0 (index) akan di isi oleh data cluster 1 (value) dan seterusnya
     reassignment_mappings: List[int] = pseudolabel_reassignment(

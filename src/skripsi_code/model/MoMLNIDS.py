@@ -2,13 +2,13 @@ import torch
 import torch.nn as nn
 from wandb.integration.sklearn.plot.classifier import classifier
 
-from src.skripsi_code.model.FeatureExtractor import DGFeatExt
-from src.skripsi_code.model.Discriminator import DomainDiscriminator
-from src.skripsi_code.model.Classifier import ClassifierANN
+from skripsi_code.model.FeatureExtractor import DGFeatExt
+from skripsi_code.model.Discriminator import DomainDiscriminator
+from skripsi_code.model.Classifier import ClassifierANN
 from torchsummary import summary
 
 
-class MoMLDNIDS(nn.Module):
+class momlnids(nn.Module):
     def __init__(
         self,
         input_nodes,
@@ -39,7 +39,7 @@ class MoMLDNIDS(nn.Module):
 
 if __name__ == "__main__":
     x = torch.randn(1000, 43).to("cuda")  # Batch of 5, input size of 20
-    model = MoMLDNIDS(
+    model = momlnids(
         input_nodes=x.size(dim=1),
         hidden_nodes=[64, 32, 16, 10],
         classifier_nodes=[64, 32, 16],

@@ -57,6 +57,8 @@ class ModelExplainer:
             return self._gradient_shap_explanation(instance, **kwargs)
         elif method == "feature_ablation":
             return self._feature_ablation_explanation(instance, **kwargs)
+        elif method == "lime":
+            return self._lime_explanation(instance, **kwargs)
         else:
             raise ValueError(f"Unknown explanation method: {method}")
     
@@ -208,6 +210,8 @@ class ModelExplainer:
         # Get original prediction
         with torch.no_grad():
             original_output = self.model(instance_tensor)
+            if isinstance(original_output, tuple):
+                original_output = original_output[0] # Take the first element if it's a tuple
             if original_output.dim() > 1:
                 original_pred = original_output.max(dim=1)[0].item()
             else:
@@ -224,6 +228,8 @@ class ModelExplainer:
             
             with torch.no_grad():
                 modified_output = self.model(modified_tensor)
+                if isinstance(modified_output, tuple):
+                    modified_output = modified_output[0] # Take the first element if it's a tuple
                 if modified_output.dim() > 1:
                     modified_pred = modified_output.max(dim=1)[0].item()
                 else:
@@ -241,6 +247,25 @@ class ModelExplainer:
             'original_prediction': original_pred
         }
     
+    def _lime_explanation(self,
+                        instance: np.ndarray,
+                        training_data: np.ndarray,
+                        **kwargs) -> Dict[str, Any]:
+        """
+        Compute LIME explanation for a single instance.
+        
+        Args:
+            instance: Input instance to explain
+            training_data: Training data for LIME
+            **kwargs: Additional LIME parameters
+            
+        Returns:
+            Dictionary with LIME explanation results
+        """
+        lime_explainer = LIMEExplainer(self.model, self.feature_names)
+        explanation = lime_explainer.explain_instance(instance, training_data, **kwargs)
+        return explanation
+
     def _global_feature_importance(self, 
                                  X_sample: np.ndarray,
                                  method: str = "permutation") -> Dict[str, Any]:

@@ -86,4 +86,4 @@
         NUM_CLASSES = 2
         CLUSTERING_STEP = 2
 
-        DATA_PATH = "./skripsi_code/data/parquet/"
+        DATA_PATH = "./src/skripsi_code/data/parquet/"

@@ -11,7 +11,7 @@ import torch
 import numpy as np
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 
-from ..config import Config
+from omegaconf import DictConfig
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 class ExperimentTracker:
     """Handles experiment tracking with wandb integration."""
     
-    def __init__(self, config: Config):
+    def __init__(self, config: DictConfig):
         """
         Initialize experiment tracker.
         

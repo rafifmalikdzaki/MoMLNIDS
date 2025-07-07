@@ -1,16 +1,16 @@
 import numpy as np
 import torch
 
-from src.skripsi_code.utils.utils import (
+from skripsi_code.utils.utils import (
     get_model_learning_rate,
     get_learning_rate_scheduler,
     get_optimizer,
     split_domain,
 )
-from src.skripsi_code.utils.dataloader import random_split_dataloader
-from src.skripsi_code.clustering.cluster_utils import pseudolabeling
-from src.skripsi_code.TrainEval.TrainEval import train, eval
-from src.skripsi_code.model.MoMLNIDS import MoMLDNIDS
+from skripsi_code.utils.dataloader import random_split_dataloader
+from skripsi_code.clustering.cluster_utils import pseudolabeling
+from skripsi_code.TrainEval.TrainEval import train, eval
+from skripsi_code.model.MoMLNIDS import momlnids
 from pathlib import Path
 from tqdm import tqdm
 from torch import nn
@@ -168,7 +168,7 @@ if __name__ == "__main__":
         NUM_CLASSES = 2
         CLUSTERING_STEP = 2
 
-        DATA_PATH = "./skripsi_code/data/parquet/"
+        DATA_PATH = "./src/skripsi_code/data/parquet/"
 
         # Executions
         source_domain, target_domain = split_domain(DOMAIN_LIST, TARGET_INDEX)
@@ -188,7 +188,7 @@ if __name__ == "__main__":
 
         discriminator_dimensions = NUM_CLUSTERS if USE_CLUSTER else NUM_DOMAINS
 
-        model = MoMLDNIDS(
+        model = momlnids(
             input_nodes=39,
             hidden_nodes=HIDDEN_NODES,
             classifier_nodes=CLASS_NODES,

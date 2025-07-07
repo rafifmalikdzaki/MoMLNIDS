@@ -1,7 +1,7 @@
 from torch.utils.data import DataLoader, random_split
 import numpy as np
 from copy import deepcopy
-from src.skripsi_code.utils.domain_dataset import MultiChunkDataset, MultiChunkParquet
+from skripsi_code.utils.domain_dataset import MultiChunkDataset, MultiChunkParquet
 from typing import List
 
 
@@ -56,3 +56,4 @@ def random_split_dataloader(
         target_data, batch_size=batch_size, shuffle=False, num_workers=n_workers, pin_memory=True
     )
     return source_train, source_val, target_test
+

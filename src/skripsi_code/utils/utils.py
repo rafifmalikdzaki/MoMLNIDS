@@ -1,4 +1,4 @@
-from src.skripsi_code.model.MoMLNIDS import MoMLDNIDS
+from skripsi_code.model.MoMLNIDS import momlnids
 from torchsummary import summary
 from torch.optim.lr_scheduler import StepLR, ExponentialLR, CosineAnnealingLR
 import torch
@@ -50,7 +50,7 @@ def get_learning_rate_scheduler(optimizer, t_max=25):
 
 if __name__ == "__main__":
     x = torch.randn(1000, 43).to("cuda")  # Batch of 5, input size of 20
-    network = MoMLDNIDS(
+    network = momlnids(
         input_nodes=x.size(dim=1), hidden_nodes=[64, 32, 16], num_domains=3, num_class=2
     ).to("cuda")
     print(network)

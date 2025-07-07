@@ -26,7 +26,7 @@ from sklearn.preprocessing import StandardScaler
 from skripsi_code.config import Config, load_config, get_config
 from skripsi_code.experiment import ExperimentTracker, MetricsLogger
 from skripsi_code.explainability import ModelExplainer, visualize_feature_importance
-from skripsi_code.model.MoMLNIDS import MoMLDNIDS
+from skripsi_code.model.MoMLNIDS import momlnids
 from skripsi_code.utils.dataloader import random_split_dataloader
 from skripsi_code.utils.domain_dataset import MultiChunkDataset, MultiChunkParquet
 from skripsi_code.TrainEval.TrainEval import train, eval
@@ -133,7 +133,7 @@ def create_model(config: Config, n_features: int) -> nn.Module:
     model_config = config.model
     
     # Create model based on configuration
-    model = MoMLDNIDS(
+    model = momlnids(
         input_nodes=n_features,
         hidden_nodes=model_config['feature_extractor']['hidden_layers'],
         classifier_nodes=model_config['classifier']['hidden_layers'],

@@ -1,6 +1,6 @@
 """Explainable AI module."""
 
-from .explainer import (
+from src.skripsi_code.explainability.explainer import (
     ModelExplainer, 
     SHAPExplainer, 
     LIMEExplainer,

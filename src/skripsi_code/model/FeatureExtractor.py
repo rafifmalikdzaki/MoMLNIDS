@@ -13,7 +13,6 @@ class DGFeatExt(nn.Module):
             hidden_nodes if hidden_nodes else [10] * 3
         )
         self.hidden_layers: int = len(hidden_nodes)
-
         self.fc_modules: nn.ModuleList = nn.ModuleList()
         self.norm = nn.BatchNorm1d(self.input_nodes)
 
@@ -55,11 +54,9 @@ class DGFeatExt(nn.Module):
 
 
 if __name__ == "__main__":
-    from torchinfo import summary
-
     model = DGFeatExt(input_nodes=20, hidden_nodes=[64, 32, 16]).to("cuda")
     print(model)
     x = torch.randn(5, 20).to("cuda")  # Batch of 5, input size of 20
     print(model(x))
-    summary(model, input_size=(5, 20))
+    summary(model, input_size=(20,))
     # print(model.feat_ext(x))
