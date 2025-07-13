@@ -478,5 +478,3 @@ def main():
             experiment_tracker.finish_experiment()
 
 
-if __name__ == "__main__":
-    main()

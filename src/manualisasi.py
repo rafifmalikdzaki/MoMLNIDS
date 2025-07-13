@@ -70,8 +70,6 @@ class MoMLDNIDS(nn.Module):
         return output_class, output_domain
 
 
-if __name__ == "__main__":
-    x = torch.randn(5, 16).to("cuda")  # Batch of 5, input size of 16
     model = MoMLDNIDS(
         input_nodes=x.size(dim=1),
         hidden_nodes=[8, 8, 8],

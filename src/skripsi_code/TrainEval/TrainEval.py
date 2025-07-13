@@ -17,6 +17,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from torch.cuda.amp import autocast, GradScaler
 
+# Import click with fallback
+try:
+    import click
+
+    CLICK_AVAILABLE = True
+except ImportError:
+    CLICK_AVAILABLE = False
+
 
 def check_gradient_norm(model, threshold=1e4):
     total_norm = 0.0
@@ -283,8 +291,6 @@ def eval(
     running_corrects = 0
     data_size = 0
 
-    
-
     num_classes = model.LabelClassifier.output_nodes
 
     # Initialize TorchMetrics for evaluation
@@ -332,8 +338,6 @@ def eval(
             running_loss += loss.item() * data.size(0)
             running_corrects += torch.sum(prediction == labels.data).item()
             data_size += data.size(0)
-
-            
 
             f1_metric_eval.update(prediction, labels)
             precision_metric_eval.update(prediction, labels)
@@ -387,6 +391,203 @@ def eval(
             step=epoch,
         )
 
-        
-
     return epoch_acc
+
+
+def demo_train_eval():
+    """Demo function to test training and evaluation functionality."""
+    try:
+        from rich.console import Console
+        from rich.table import Table
+        from rich.panel import Panel
+        from torch.utils.data import TensorDataset, DataLoader
+
+        RICH_AVAILABLE = True
+    except ImportError:
+        RICH_AVAILABLE = False
+
+    if RICH_AVAILABLE:
+        console = Console()
+        console.print(Panel.fit("🚀 Training & Evaluation Demo", style="bold blue"))
+    else:
+        print("🚀 Training & Evaluation Demo")
+
+    try:
+        # Create dummy model and data
+        from skripsi_code.model.MoMLNIDS import momlnids
+
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        print(f"Using device: {device}")
+
+        # Create model
+        model = (
+            momlnids(
+                input_nodes=10,
+                hidden_nodes=[32, 16],
+                classifier_nodes=[16],
+                num_domains=3,
+                num_class=2,
+                single_layer=True,
+            )
+            .double()
+            .to(device)
+        )
+
+        print("✅ Model created successfully")
+
+        # Create dummy data
+        n_samples = 100
+        n_features = 10
+
+        # Training data
+        X_train = torch.randn(n_samples, n_features, dtype=torch.double)
+        y_train = torch.randint(0, 2, (n_samples,))
+        d_train = torch.randint(0, 3, (n_samples,))
+
+        train_dataset = TensorDataset(X_train, y_train, d_train)
+        train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
+
+        # Validation data
+        X_val = torch.randn(50, n_features, dtype=torch.double)
+        y_val = torch.randint(0, 2, (50,))
+        d_val = torch.randint(0, 3, (50,))
+
+        val_dataset = TensorDataset(X_val, y_val, d_val)
+        val_loader = DataLoader(val_dataset, batch_size=16, shuffle=False)
+
+        print("✅ Dummy datasets created")
+
+        # Create optimizers
+        from skripsi_code.utils.utils import get_model_learning_rate, get_optimizer
+
+        model_learning_rate = get_model_learning_rate(model, 1.0, 1.0, 1.0)
+        optimizers = [
+            get_optimizer(module, 0.001 * alpha)
+            for module, alpha in model_learning_rate
+        ]
+
+        print("✅ Optimizers created")
+
+        # Test training for one epoch
+        print("🔄 Testing training function...")
+
+        model_trained, optimizers_updated, num_batches = train(
+            model=model,
+            train_data=train_loader,
+            optimizers=optimizers,
+            device=device,
+            epoch=1,
+            num_epoch=5,
+            filename="temp_train_log.txt",
+            max_batches=3,  # Limit for demo
+            wandb_enabled=False,
+        )
+
+        print(f"✅ Training completed: {num_batches} batches processed")
+
+        # Test evaluation
+        print("📊 Testing evaluation function...")
+
+        criterion = nn.CrossEntropyLoss()
+        accuracy = eval(
+            model=model_trained,
+            eval_data=val_loader,
+            criterion=criterion,
+            device=device,
+            num_epoch=5,
+            filename="temp_eval_log.txt",
+            wandb_enabled=False,
+            epoch=1,
+        )
+
+        print(f"✅ Evaluation completed: Accuracy = {accuracy:.4f}")
+
+        # Clean up temp files
+        import os
+
+        for temp_file in ["temp_train_log.txt", "temp_eval_log.txt"]:
+            if os.path.exists(temp_file):
+                os.remove(temp_file)
+
+        print("✨ Training & Evaluation demo completed!")
+
+    except Exception as e:
+        print(f"❌ Error in demo: {e}")
+        import traceback
+
+        traceback.print_exc()
+
+
+# Only add click decorator if click is available
+if CLICK_AVAILABLE:
+
+    @click.command()
+    @click.option(
+        "--demo", is_flag=True, help="Run training and evaluation demonstration"
+    )
+    @click.option("--test-metrics", is_flag=True, help="Test metrics calculation")
+    def main(demo, test_metrics):
+        """
+        Test and demonstrate training and evaluation functionality.
+        """
+        from rich.console import Console
+        from rich.panel import Panel
+
+        console = Console()
+
+        if demo:
+            demo_train_eval()
+        elif test_metrics:
+            console.print(Panel.fit("📊 Testing Metrics", style="bold blue"))
+
+            # Test metrics computation
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+            # Create dummy predictions and labels
+            num_classes = 2
+            batch_size = 32
+
+            predictions = torch.randint(0, num_classes, (batch_size,)).to(device)
+            labels = torch.randint(0, num_classes, (batch_size,)).to(device)
+            logits = torch.randn(batch_size, num_classes).to(device)
+
+            # Test individual metrics
+            f1_metric = F1Score(
+                task="multiclass", num_classes=num_classes, average="weighted"
+            ).to(device)
+            precision_metric = Precision(
+                task="multiclass", num_classes=num_classes, average="weighted"
+            ).to(device)
+            recall_metric = Recall(
+                task="multiclass", num_classes=num_classes, average="weighted"
+            ).to(device)
+
+            f1_score = f1_metric(predictions, labels)
+            precision_score = precision_metric(predictions, labels)
+            recall_score = recall_metric(predictions, labels)
+
+            console.print(f"✅ F1 Score: {f1_score:.4f}")
+            console.print(f"✅ Precision: {precision_score:.4f}")
+            console.print(f"✅ Recall: {recall_score:.4f}")
+
+            console.print("✨ Metrics test completed!")
+        else:
+            console.print(
+                "Use --demo to run demonstration or --test-metrics to test metrics"
+            )
+else:
+
+    def main():
+        """
+        Test and demonstrate training and evaluation functionality.
+        """
+        print("Training & Evaluation Module")
+        print("Available functions:")
+        print("- demo_train_eval(): Run training and evaluation demo")
+        print("- train(): Training function")
+        print("- eval(): Evaluation function")
+
+        # Run demo by default when click is not available
+        demo_train_eval()
+
+

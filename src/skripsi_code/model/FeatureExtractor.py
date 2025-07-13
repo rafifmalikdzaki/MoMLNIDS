@@ -59,4 +59,3 @@ if __name__ == "__main__":
     x = torch.randn(5, 20).to("cuda")  # Batch of 5, input size of 20
     print(model(x))
     summary(model, input_size=(20,))
-    # print(model.feat_ext(x))

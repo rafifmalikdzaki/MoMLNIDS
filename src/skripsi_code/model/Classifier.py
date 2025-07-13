@@ -16,9 +16,9 @@ class ClassifierANN(nn.Module):
 
         self.input_nodes: int = input_nodes
         self.output_nodes: int = num_class
-        
+
         self.fc_modules: nn.ModuleList = nn.ModuleList()
-        
+
         if hidden_nodes:
             # Use provided hidden layers
             self.hidden_nodes: List[int] = [self.input_nodes] + hidden_nodes
@@ -48,13 +48,3 @@ class ClassifierANN(nn.Module):
 
         domain_output = self.output_layer(x)
         return domain_output
-
-
-if __name__ == "__main__":
-    model = ClassifierANN(input_nodes=20, num_class=3, hidden_nodes=[64, 32, 16]).to(
-        "cuda"
-    )
-    print(model)
-    x = torch.randn(5, 20).to("cuda")  # Batch of 5, input size of 20
-    print(model(x))
-    summary(model, (20,))

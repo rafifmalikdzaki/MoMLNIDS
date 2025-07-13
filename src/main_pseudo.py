@@ -21,8 +21,6 @@ def init_weights(m):
 
 import wandb
 
-if __name__ == "__main__":
-
     for j in range(5, 9):
         for i in range(3):
             wandb.init(project="MoMLNIDS_Training", group=DOMAIN_LIST[TARGET_INDEX], tags=[EXPERIMENT_NUM])

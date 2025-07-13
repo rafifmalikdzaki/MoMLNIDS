@@ -76,13 +76,3 @@ class DomainDiscriminator(nn.Module):
 
         domain_output = self.output_layer(x)
         return domain_output
-
-
-if __name__ == "__main__":
-    model = DomainDiscriminator(
-        input_nodes=20, num_domains=3, hidden_nodes=[64, 32, 16]
-    ).to("cuda")
-    print(model)
-    x = torch.randn(5, 20).to("cuda")  # Batch of 5, input size of 20
-    print(model(x))
-    summary(model, (20,))
