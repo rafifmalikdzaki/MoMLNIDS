@@ -425,6 +425,25 @@ test(model): add unit tests for feature extractor
 
 
 
+## 📚 Documentation
+
+For comprehensive documentation, guides, and tutorials, visit the [`documentation/`](./documentation/) directory:
+
+### 🎯 **Quick Start Guides**
+- [`documentation/TUI_README.md`](./documentation/TUI_README.md) - Interactive textual user interface
+- [`documentation/ENHANCED_DEMO_USAGE.md`](./documentation/ENHANCED_DEMO_USAGE.md) - Enhanced CLI demo script
+
+### 🔍 **Technical Documentation**
+- [`documentation/MAIN_FUNCTIONS_SUMMARY.md`](./documentation/MAIN_FUNCTIONS_SUMMARY.md) - Complete codebase overview
+- [`docs/ENHANCED_FEATURES.md`](./docs/ENHANCED_FEATURES.md) - Modern ML features and capabilities
+
+### 📊 **Visualization & Analysis**
+- [`documentation/ENHANCED_VISUALIZER_GUIDE.md`](./documentation/ENHANCED_VISUALIZER_GUIDE.md) - Advanced plotting tools
+- [`documentation/RESULTS_VISUALIZER_GUIDE.md`](./documentation/RESULTS_VISUALIZER_GUIDE.md) - Standard analysis
+
+### 📋 **Complete Documentation Index**
+- [`documentation/DOCUMENTATION_OVERVIEW.md`](./documentation/DOCUMENTATION_OVERVIEW.md) - **Meta-documentation** with navigation guide to all available documentation
+
 ## Contact Information
 
 - **Author**: Dzaki Rafif Malik
