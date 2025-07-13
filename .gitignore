@@ -171,6 +171,7 @@ cython_debug/
 ProperTraining/
 ProperTraining50Epoch/
 Training_results/
+results/
 *.pt
 *.pth
 *.zip
