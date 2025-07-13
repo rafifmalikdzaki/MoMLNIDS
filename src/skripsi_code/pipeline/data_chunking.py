@@ -60,8 +60,6 @@ def split_csv_by_rows(
                 future.result()  # This will raise an exception if any task failed
 
 
-if __name__ == "__main__":
-    INPUT_PATH = "../data/raw/NIDS_DATA/"
 
     DATA_LIST = [
         # "NF-UNSW-NB15-v2.csv",

@@ -22,14 +22,3 @@ class MaximumSquareLoss(nn.Module):
         b = torch.mul(p, p)
         b = -1.0 * b.sum(dim=1).mean() / 2
         return b
-
-
-if __name__ == "__main__":
-    a = torch.randn((4, 5))
-
-    ENT = EntropyLoss()
-    MSL = MaximumSquareLoss()
-
-    print(a)
-    print(ENT(a))
-    print(MSL(a))
