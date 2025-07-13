@@ -1,0 +1,5 @@
+MoMLNIDS Automatic Prediction Demo with Real Data
+
+This script automatically loads real network intrusion detection data from the
+parquet files and demonstrates the prediction capabilities of trained MoMLNIDS models.
+"""

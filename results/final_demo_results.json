@@ -1,0 +1,60 @@
+{
+  "config": {
+    "model_name": "MoMLNIDS",
+    "target_domain": "NF-CSE-CIC-IDS2018-v2",
+    "batch_size": 128,
+    "learning_rate": "N/A",
+    "epochs": "N/A",
+    "datasets": [
+      "NF-CSE-CIC-IDS2018-v2"
+    ],
+    "random_seed": 42,
+    "model_path": "ProperTraining/NF-CSE-CIC-IDS2018-v2/NF-CSE-CIC-IDS2018-v2_N|PseudoLabelling|Cluster_4/model_best.pt",
+    "evaluation_timestamp": "2025-07-13T22:58:11.578268",
+    "num_samples_evaluated": 48,
+    "model_config": {
+      "input_nodes": 39,
+      "hidden_nodes": [
+        39,
+        64,
+        32,
+        16,
+        10
+      ],
+      "num_domains": 4,
+      "num_class": 2
+    }
+  },
+  "evaluation_results": {
+    "NF-CSE-CIC-IDS2018-v2": {
+      "metrics": {
+        "NF-CSE-CIC-IDS2018-v2_accuracy": 0.3542,
+        "NF-CSE-CIC-IDS2018-v2_precision": 0.037,
+        "NF-CSE-CIC-IDS2018-v2_recall": 0.1667,
+        "NF-CSE-CIC-IDS2018-v2_f1_score": 0.0606,
+        "NF-CSE-CIC-IDS2018-v2_auc_roc": 0.4048
+      },
+      "predictions": "[1 0 1 1 1 0 1 1 1 1 1 0 0 0 1 1 1 1 1 1 0 0 1 1 0 0 0 1 0 1 0 1 0 0 0 0 1\n 0 1 1 0 0 0 1 0 1 1 1]",
+      "probabilities": "[[0.13879535 0.86120468]\n [0.90511936 0.09488063]\n [0.17563494 0.82436508]\n [0.12050529 0.87949467]\n [0.20751201 0.79248798]\n [0.86613101 0.13386902]\n [0.17241704 0.8275829 ]\n [0.1638668  0.83613318]\n [0.18879868 0.81120127]\n [0.14357075 0.85642922]\n [0.12459623 0.87540376]\n [0.55631238 0.44368756]\n [0.64441711 0.35558286]\n [0.96943259 0.03056734]\n [0.18843764 0.81156236]\n [0.2585521  0.74144787]\n [0.17273414 0.82726586]\n [0.16765535 0.83234465]\n [0.31879586 0.68120414]\n [0.24216761 0.75783235]\n [0.86649942 0.13350052]\n [0.93759078 0.0624092 ]\n [0.17547964 0.82452035]\n [0.1697109  0.83028907]\n [0.93008995 0.06991006]\n [0.94999558 0.05000449]\n [0.9699024  0.03009762]\n [0.18271309 0.81728685]\n [0.86731291 0.13268712]\n [0.17931898 0.8206811 ]\n [0.94633716 0.05366284]\n [0.2764596  0.72354043]\n [0.91923028 0.08076968]\n [0.96040779 0.03959221]\n [0.92623055 0.07376947]\n [0.86879647 0.13120347]\n [0.28183922 0.71816075]\n [0.92879337 0.07120667]\n [0.12123598 0.87876397]\n [0.15571758 0.84428245]\n [0.97008216 0.02991784]\n [0.94894141 0.05105854]\n [0.94996542 0.05003459]\n [0.08376928 0.91623074]\n [0.97366148 0.02633846]\n [0.16134654 0.8386535 ]\n [0.11684442 0.88315558]\n [0.08587933 0.91412061]]",
+      "true_labels": "[0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 1 0 1 0\n 0 0 0 0 0 0 1 0 0 0 0]",
+      "confusion_matrix": {
+        "true_positive": 1,
+        "true_negative": 16,
+        "false_positive": 26,
+        "false_negative": 5
+      },
+      "confidence_analysis": {
+        "overall_avg": 0.8559,
+        "correct_predictions_avg": 0.9025,
+        "incorrect_predictions_avg": 0.8303,
+        "min_confidence": 0.5563,
+        "max_confidence": 0.9737
+      }
+    }
+  },
+  "domain_generalization_info": {
+    "evaluation_type": "target_domain_evaluation",
+    "target_domain": "NF-CSE-CIC-IDS2018-v2",
+    "note": "This is domain generalization evaluation where model trained on source domains is tested on target domain"
+  }
+}

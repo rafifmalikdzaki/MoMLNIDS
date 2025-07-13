@@ -1,0 +1,68 @@
+{
+  "evaluation_info": {
+    "evaluation_type": "comprehensive_domain_generalization",
+    "model_path": "ProperTraining/NF-CSE-CIC-IDS2018-v2/NF-CSE-CIC-IDS2018-v2_N|PseudoLabelling|Cluster_2/model_best.pt",
+    "model_target_domain": "NF-CSE-CIC-IDS2018-v2",
+    "evaluation_timestamp": "2025-07-14T00:42:55.479446",
+    "total_datasets_evaluated": 4,
+    "successful_evaluations": 4,
+    "failed_evaluations": 0
+  },
+  "summary_statistics": {
+    "mean_accuracy": 0.343225,
+    "std_accuracy": 0.2856750021878008,
+    "mean_f1_score": 0.280675,
+    "std_f1_score": 0.2901382978425978,
+    "mean_auc_roc": 0.5404,
+    "std_auc_roc": 0.2743515172183307,
+    "best_performing_dataset": "NF-ToN-IoT-v2",
+    "worst_performing_dataset": "NF-BoT-IoT-v2"
+  },
+  "individual_dataset_results": {
+    "NF-CSE-CIC-IDS2018-v2": {
+      "evaluation_type": "trained_target",
+      "accuracy": 0.1657,
+      "precision": 0.1227,
+      "recall": 0.9635,
+      "f1_score": 0.2177,
+      "auc_roc": 0.6987,
+      "samples": 50000
+    },
+    "NF-ToN-IoT-v2": {
+      "evaluation_type": "target",
+      "accuracy": 0.7873,
+      "precision": 0.9132,
+      "recall": 0.6681,
+      "f1_score": 0.7717,
+      "auc_roc": 0.8578,
+      "samples": 50000
+    },
+    "NF-UNSW-NB15-v2": {
+      "evaluation_type": "target",
+      "accuracy": 0.3863,
+      "precision": 0.0376,
+      "recall": 0.6164,
+      "f1_score": 0.0709,
+      "auc_roc": 0.4788,
+      "samples": 50000
+    },
+    "NF-BoT-IoT-v2": {
+      "evaluation_type": "source",
+      "accuracy": 0.0336,
+      "precision": 0.9459,
+      "recall": 0.0322,
+      "f1_score": 0.0624,
+      "auc_roc": 0.1263,
+      "samples": 50000
+    }
+  },
+  "domain_generalization_analysis": {
+    "note": "This evaluation tests the model's ability to generalize across different network domains",
+    "target_domain": "NF-CSE-CIC-IDS2018-v2",
+    "cross_domain_datasets": [
+      "NF-ToN-IoT-v2",
+      "NF-UNSW-NB15-v2",
+      "NF-BoT-IoT-v2"
+    ]
+  }
+}

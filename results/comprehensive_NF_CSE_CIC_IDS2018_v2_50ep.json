@@ -1,0 +1,68 @@
+{
+  "evaluation_info": {
+    "evaluation_type": "comprehensive_domain_generalization",
+    "model_path": "ProperTraining50Epoch/NF-CSE-CIC-IDS2018-v2/NF-CSE-CIC-IDS2018-v2_N|PseudoLabelling|Cluster_5/model_48.pt",
+    "model_target_domain": "NF-CSE-CIC-IDS2018-v2",
+    "evaluation_timestamp": "2025-07-14T00:20:16.589773",
+    "total_datasets_evaluated": 4,
+    "successful_evaluations": 4,
+    "failed_evaluations": 0
+  },
+  "summary_statistics": {
+    "mean_accuracy": 0.5153749999999999,
+    "std_accuracy": 0.28513586564127635,
+    "mean_f1_score": 0.281225,
+    "std_f1_score": 0.32013399831164446,
+    "mean_auc_roc": 0.5868500000000001,
+    "std_auc_roc": 0.33540030187821834,
+    "best_performing_dataset": "NF-ToN-IoT-v2",
+    "worst_performing_dataset": "NF-BoT-IoT-v2"
+  },
+  "individual_dataset_results": {
+    "NF-CSE-CIC-IDS2018-v2": {
+      "evaluation_type": "trained_target",
+      "accuracy": 0.6465,
+      "precision": 0.1046,
+      "recall": 0.263,
+      "f1_score": 0.1497,
+      "auc_roc": 0.4142,
+      "samples": 50000
+    },
+    "NF-ToN-IoT-v2": {
+      "evaluation_type": "target",
+      "accuracy": 0.8084,
+      "precision": 0.9463,
+      "recall": 0.7435,
+      "f1_score": 0.8327,
+      "auc_roc": 0.9314,
+      "samples": 50000
+    },
+    "NF-UNSW-NB15-v2": {
+      "evaluation_type": "target",
+      "accuracy": 0.5604,
+      "precision": 0.03,
+      "recall": 0.9431,
+      "f1_score": 0.0582,
+      "auc_roc": 0.8795,
+      "samples": 50000
+    },
+    "NF-BoT-IoT-v2": {
+      "evaluation_type": "source",
+      "accuracy": 0.0462,
+      "precision": 0.979,
+      "recall": 0.044,
+      "f1_score": 0.0843,
+      "auc_roc": 0.1223,
+      "samples": 50000
+    }
+  },
+  "domain_generalization_analysis": {
+    "note": "This evaluation tests the model's ability to generalize across different network domains",
+    "target_domain": "NF-CSE-CIC-IDS2018-v2",
+    "cross_domain_datasets": [
+      "NF-ToN-IoT-v2",
+      "NF-UNSW-NB15-v2",
+      "NF-BoT-IoT-v2"
+    ]
+  }
+}

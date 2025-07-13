@@ -1,0 +1,60 @@
+{
+  "config": {
+    "model_name": "MoMLNIDS",
+    "target_domain": "NF-UNSW-NB15-v2",
+    "batch_size": 128,
+    "learning_rate": "N/A",
+    "epochs": "N/A",
+    "datasets": [
+      "NF-UNSW-NB15-v2"
+    ],
+    "random_seed": 42,
+    "model_path": "ProperTraining/NF-CSE-CIC-IDS2018-v2/NF-CSE-CIC-IDS2018-v2_N|PseudoLabelling|Cluster_2/model_best.pt",
+    "evaluation_timestamp": "2025-07-14T00:42:43.680215",
+    "num_samples_evaluated": 50000,
+    "model_config": {
+      "input_nodes": 39,
+      "hidden_nodes": [
+        39,
+        64,
+        32,
+        16,
+        10
+      ],
+      "num_domains": 2,
+      "num_class": 2
+    }
+  },
+  "evaluation_results": {
+    "NF-UNSW-NB15-v2": {
+      "metrics": {
+        "NF-UNSW-NB15-v2_accuracy": 0.3863,
+        "NF-UNSW-NB15-v2_precision": 0.0376,
+        "NF-UNSW-NB15-v2_recall": 0.6164,
+        "NF-UNSW-NB15-v2_f1_score": 0.0709,
+        "NF-UNSW-NB15-v2_auc_roc": 0.4788
+      },
+      "predictions": "[1 1 1 ... 0 1 1]",
+      "probabilities": "[[0.42908981 0.57091016]\n [0.48384234 0.51615769]\n [0.40542334 0.5945766 ]\n ...\n [0.54987377 0.4501262 ]\n [0.4602519  0.53974807]\n [0.43219206 0.56780791]]",
+      "true_labels": "[0 0 0 ... 0 0 0]",
+      "confusion_matrix": {
+        "true_positive": 1170,
+        "true_negative": 18143,
+        "false_positive": 29959,
+        "false_negative": 728
+      },
+      "confidence_analysis": {
+        "overall_avg": 0.5575,
+        "correct_predictions_avg": 0.5516,
+        "incorrect_predictions_avg": 0.5613,
+        "min_confidence": 0.5,
+        "max_confidence": 1.0
+      }
+    }
+  },
+  "domain_generalization_info": {
+    "evaluation_type": "target_domain_evaluation",
+    "target_domain": "NF-UNSW-NB15-v2",
+    "note": "This is domain generalization evaluation where model trained on source domains is tested on target domain"
+  }
+}

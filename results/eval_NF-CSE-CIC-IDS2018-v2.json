@@ -1,0 +1,60 @@
+{
+  "config": {
+    "model_name": "MoMLNIDS",
+    "target_domain": "NF-CSE-CIC-IDS2018-v2",
+    "batch_size": 128,
+    "learning_rate": "N/A",
+    "epochs": "N/A",
+    "datasets": [
+      "NF-CSE-CIC-IDS2018-v2"
+    ],
+    "random_seed": 42,
+    "model_path": "ProperTraining/NF-CSE-CIC-IDS2018-v2/NF-CSE-CIC-IDS2018-v2_N|PseudoLabelling|Cluster_2/model_best.pt",
+    "evaluation_timestamp": "2025-07-14T00:42:22.413493",
+    "num_samples_evaluated": 50000,
+    "model_config": {
+      "input_nodes": 39,
+      "hidden_nodes": [
+        39,
+        64,
+        32,
+        16,
+        10
+      ],
+      "num_domains": 2,
+      "num_class": 2
+    }
+  },
+  "evaluation_results": {
+    "NF-CSE-CIC-IDS2018-v2": {
+      "metrics": {
+        "NF-CSE-CIC-IDS2018-v2_accuracy": 0.1657,
+        "NF-CSE-CIC-IDS2018-v2_precision": 0.1227,
+        "NF-CSE-CIC-IDS2018-v2_recall": 0.9635,
+        "NF-CSE-CIC-IDS2018-v2_f1_score": 0.2177,
+        "NF-CSE-CIC-IDS2018-v2_auc_roc": 0.6987
+      },
+      "predictions": "[1 1 1 ... 1 1 1]",
+      "probabilities": "[[0.38436839 0.61563158]\n [0.05161066 0.94838935]\n [0.38563508 0.61436486]\n ...\n [0.39293501 0.60706496]\n [0.04884496 0.95115501]\n [0.0505592  0.94944084]]",
+      "true_labels": "[1 0 1 ... 0 0 1]",
+      "confusion_matrix": {
+        "true_positive": 5803,
+        "true_negative": 2483,
+        "false_positive": 41494,
+        "false_negative": 220
+      },
+      "confidence_analysis": {
+        "overall_avg": 0.7054,
+        "correct_predictions_avg": 0.7798,
+        "incorrect_predictions_avg": 0.6906,
+        "min_confidence": 0.5,
+        "max_confidence": 1.0
+      }
+    }
+  },
+  "domain_generalization_info": {
+    "evaluation_type": "target_domain_evaluation",
+    "target_domain": "NF-CSE-CIC-IDS2018-v2",
+    "note": "This is domain generalization evaluation where model trained on source domains is tested on target domain"
+  }
+}
