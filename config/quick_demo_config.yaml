@@ -3,7 +3,7 @@ project:
 wandb:
   enabled: false
 training:
-  batch_size: 1
+  batch_size: 4
   epochs: 1
   learning_rate: 0.001
   target_index: 0
