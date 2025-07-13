@@ -10,7 +10,7 @@
     ],
     "random_seed": 42,
     "model_path": "ProperTraining/NF-CSE-CIC-IDS2018-v2/NF-CSE-CIC-IDS2018-v2_N|PseudoLabelling|Cluster_2/model_best.pt",
-    "evaluation_timestamp": "2025-07-14T00:42:22.413493",
+    "evaluation_timestamp": "2025-07-14T01:04:55.628275",
     "num_samples_evaluated": 50000,
     "model_config": {
       "input_nodes": 39,
@@ -28,26 +28,26 @@
   "evaluation_results": {
     "NF-CSE-CIC-IDS2018-v2": {
       "metrics": {
-        "NF-CSE-CIC-IDS2018-v2_accuracy": 0.1657,
-        "NF-CSE-CIC-IDS2018-v2_precision": 0.1227,
-        "NF-CSE-CIC-IDS2018-v2_recall": 0.9635,
-        "NF-CSE-CIC-IDS2018-v2_f1_score": 0.2177,
-        "NF-CSE-CIC-IDS2018-v2_auc_roc": 0.6987
+        "NF-CSE-CIC-IDS2018-v2_accuracy": 0.1661,
+        "NF-CSE-CIC-IDS2018-v2_precision": 0.1213,
+        "NF-CSE-CIC-IDS2018-v2_recall": 0.9714,
+        "NF-CSE-CIC-IDS2018-v2_f1_score": 0.2156,
+        "NF-CSE-CIC-IDS2018-v2_auc_roc": 0.7041
       },
       "predictions": "[1 1 1 ... 1 1 1]",
-      "probabilities": "[[0.38436839 0.61563158]\n [0.05161066 0.94838935]\n [0.38563508 0.61436486]\n ...\n [0.39293501 0.60706496]\n [0.04884496 0.95115501]\n [0.0505592  0.94944084]]",
-      "true_labels": "[1 0 1 ... 0 0 1]",
+      "probabilities": "[[0.08355696 0.91644299]\n [0.41595513 0.58404487]\n [0.05545664 0.94454342]\n ...\n [0.41371167 0.58628833]\n [0.40540928 0.59459072]\n [0.05411754 0.9458825 ]]",
+      "true_labels": "[0 0 0 ... 0 0 0]",
       "confusion_matrix": {
-        "true_positive": 5803,
-        "true_negative": 2483,
-        "false_positive": 41494,
-        "false_negative": 220
+        "true_positive": 5731,
+        "true_negative": 2575,
+        "false_positive": 41525,
+        "false_negative": 169
       },
       "confidence_analysis": {
-        "overall_avg": 0.7054,
-        "correct_predictions_avg": 0.7798,
-        "incorrect_predictions_avg": 0.6906,
-        "min_confidence": 0.5,
+        "overall_avg": 0.7044,
+        "correct_predictions_avg": 0.7762,
+        "incorrect_predictions_avg": 0.6901,
+        "min_confidence": 0.5001,
         "max_confidence": 1.0
       }
     }

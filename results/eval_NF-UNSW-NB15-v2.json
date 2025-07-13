@@ -10,7 +10,7 @@
     ],
     "random_seed": 42,
     "model_path": "ProperTraining/NF-CSE-CIC-IDS2018-v2/NF-CSE-CIC-IDS2018-v2_N|PseudoLabelling|Cluster_2/model_best.pt",
-    "evaluation_timestamp": "2025-07-14T00:42:43.680215",
+    "evaluation_timestamp": "2025-07-14T01:05:14.942566",
     "num_samples_evaluated": 50000,
     "model_config": {
       "input_nodes": 39,
@@ -28,25 +28,25 @@
   "evaluation_results": {
     "NF-UNSW-NB15-v2": {
       "metrics": {
-        "NF-UNSW-NB15-v2_accuracy": 0.3863,
-        "NF-UNSW-NB15-v2_precision": 0.0376,
-        "NF-UNSW-NB15-v2_recall": 0.6164,
-        "NF-UNSW-NB15-v2_f1_score": 0.0709,
-        "NF-UNSW-NB15-v2_auc_roc": 0.4788
+        "NF-UNSW-NB15-v2_accuracy": 0.3886,
+        "NF-UNSW-NB15-v2_precision": 0.0367,
+        "NF-UNSW-NB15-v2_recall": 0.6962,
+        "NF-UNSW-NB15-v2_f1_score": 0.0697,
+        "NF-UNSW-NB15-v2_auc_roc": 0.5207
       },
-      "predictions": "[1 1 1 ... 0 1 1]",
-      "probabilities": "[[0.42908981 0.57091016]\n [0.48384234 0.51615769]\n [0.40542334 0.5945766 ]\n ...\n [0.54987377 0.4501262 ]\n [0.4602519  0.53974807]\n [0.43219206 0.56780791]]",
+      "predictions": "[1 1 1 ... 1 1 1]",
+      "probabilities": "[[0.44751027 0.55248976]\n [0.48359779 0.51640224]\n [0.48359779 0.51640224]\n ...\n [0.44646391 0.55353606]\n [0.42696974 0.57303023]\n [0.39294919 0.60705078]]",
       "true_labels": "[0 0 0 ... 0 0 0]",
       "confusion_matrix": {
-        "true_positive": 1170,
-        "true_negative": 18143,
-        "false_positive": 29959,
-        "false_negative": 728
+        "true_positive": 1146,
+        "true_negative": 18282,
+        "false_positive": 30072,
+        "false_negative": 500
       },
       "confidence_analysis": {
-        "overall_avg": 0.5575,
-        "correct_predictions_avg": 0.5516,
-        "incorrect_predictions_avg": 0.5613,
+        "overall_avg": 0.557,
+        "correct_predictions_avg": 0.55,
+        "incorrect_predictions_avg": 0.5614,
         "min_confidence": 0.5,
         "max_confidence": 1.0
       }

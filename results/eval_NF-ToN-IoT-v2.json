@@ -10,7 +10,7 @@
     ],
     "random_seed": 42,
     "model_path": "ProperTraining/NF-CSE-CIC-IDS2018-v2/NF-CSE-CIC-IDS2018-v2_N|PseudoLabelling|Cluster_2/model_best.pt",
-    "evaluation_timestamp": "2025-07-14T00:42:32.970208",
+    "evaluation_timestamp": "2025-07-14T01:05:05.259641",
     "num_samples_evaluated": 50000,
     "model_config": {
       "input_nodes": 39,
@@ -28,26 +28,26 @@
   "evaluation_results": {
     "NF-ToN-IoT-v2": {
       "metrics": {
-        "NF-ToN-IoT-v2_accuracy": 0.7873,
-        "NF-ToN-IoT-v2_precision": 0.9132,
-        "NF-ToN-IoT-v2_recall": 0.6681,
-        "NF-ToN-IoT-v2_f1_score": 0.7717,
-        "NF-ToN-IoT-v2_auc_roc": 0.8578
+        "NF-ToN-IoT-v2_accuracy": 0.8561,
+        "NF-ToN-IoT-v2_precision": 0.8653,
+        "NF-ToN-IoT-v2_recall": 0.7985,
+        "NF-ToN-IoT-v2_f1_score": 0.8306,
+        "NF-ToN-IoT-v2_auc_roc": 0.917
       },
-      "predictions": "[1 1 1 ... 0 0 0]",
-      "probabilities": "[[0.34475094 0.65524906]\n [0.34469518 0.65530479]\n [0.36141527 0.63858479]\n ...\n [0.64962804 0.35037199]\n [0.64962804 0.35037199]\n [0.64962804 0.35037199]]",
-      "true_labels": "[1 1 1 ... 0 0 0]",
+      "predictions": "[0 0 0 ... 0 0 0]",
+      "probabilities": "[[0.64962804 0.35037199]\n [0.62149358 0.37850642]\n [0.64962804 0.35037199]\n ...\n [0.64962804 0.35037199]\n [0.64962804 0.35037199]\n [0.64962804 0.35037199]]",
+      "true_labels": "[0 0 0 ... 0 0 0]",
       "confusion_matrix": {
-        "true_positive": 17973,
-        "true_negative": 21391,
-        "false_positive": 1708,
-        "false_negative": 8928
+        "true_positive": 17642,
+        "true_negative": 25161,
+        "false_positive": 2746,
+        "false_negative": 4451
       },
       "confidence_analysis": {
-        "overall_avg": 0.6253,
-        "correct_predictions_avg": 0.6271,
-        "incorrect_predictions_avg": 0.6186,
-        "min_confidence": 0.5001,
+        "overall_avg": 0.6234,
+        "correct_predictions_avg": 0.6262,
+        "incorrect_predictions_avg": 0.6065,
+        "min_confidence": 0.5003,
         "max_confidence": 1.0
       }
     }

@@ -43,14 +43,14 @@ def main(model_path, num_samples, export_json):
     # Extract target domain from model path
     model_target_domain = None
     # Define domain relationships based on MoMLNIDS framework
-    # BoT-IoT is considered source domain, others are target domains
-    source_domain = "NF-BoT-IoT-v2"
+    # The model's target domain is NOT used for training (multi-source training scheme)
+    # BoT-IoT is ALWAYS a target domain as well
 
     available_datasets = [
         "NF-CSE-CIC-IDS2018-v2",
         "NF-ToN-IoT-v2",
         "NF-UNSW-NB15-v2",
-        "NF-BoT-IoT-v2",  # Source domain
+        "NF-BoT-IoT-v2",  # Always target domain
     ]
 
     for dataset_name in available_datasets:
@@ -59,7 +59,12 @@ def main(model_path, num_samples, export_json):
             break
 
     if model_target_domain:
-        console.print(f"🎯 Model trained for target domain: {model_target_domain}")
+        console.print(
+            f"🎯 Model target domain (not used in training): {model_target_domain}"
+        )
+        console.print(
+            f"📊 Multi-source training scheme: other datasets are source domains"
+        )
         console.print(f"📊 Evaluating domain generalization across all datasets")
     else:
         console.print(f"🔍 Evaluating model across all available datasets")
@@ -71,13 +76,13 @@ def main(model_path, num_samples, export_json):
         console.print(f"\n{'=' * 80}")
         console.print(f"📊 Dataset {i}/{len(available_datasets)}: {dataset_name}")
 
-        # Identify domain type based on MoMLNIDS framework
+        # Identify domain type based on MoMLNIDS multi-source training framework
         if dataset_name == model_target_domain:
-            eval_type = "🎯 TARGET DOMAIN (Model trained on this)"
-        elif dataset_name == source_domain:
-            eval_type = "📦 SOURCE DOMAIN (BoT-IoT source data)"
+            eval_type = "🎯 TARGET DOMAIN (Not used in training - evaluation only)"
+        elif dataset_name == "NF-BoT-IoT-v2":
+            eval_type = "🎯 TARGET DOMAIN (Always target - not used in training)"
         else:
-            eval_type = "🔄 TARGET DOMAIN (Cross-domain generalization)"
+            eval_type = "📦 SOURCE DOMAIN (Used in multi-source training)"
 
         console.print(f"   {eval_type}")
         console.print(f"{'=' * 80}")
@@ -114,11 +119,10 @@ def main(model_path, num_samples, export_json):
                     ]["metrics"]
 
                     all_results[dataset_name] = {
-                        "evaluation_type": "trained_target"
+                        "evaluation_type": "target"
                         if dataset_name == model_target_domain
-                        else "source"
-                        if dataset_name == source_domain
-                        else "target",
+                        or dataset_name == "NF-BoT-IoT-v2"
+                        else "source",
                         "accuracy": dataset_metrics[f"{dataset_name}_accuracy"],
                         "precision": dataset_metrics[f"{dataset_name}_precision"],
                         "recall": dataset_metrics[f"{dataset_name}_recall"],
@@ -185,10 +189,8 @@ def display_comprehensive_summary(console, all_results, model_target_domain):
 
         eval_type = (
             "🎯 Target"
-            if dataset_name == model_target_domain
+            if dataset_name == model_target_domain or dataset_name == "NF-BoT-IoT-v2"
             else "📦 Source"
-            if dataset_name == "NF-BoT-IoT-v2"
-            else "🔄 Target"
         )
 
         summary_table.add_row(
@@ -200,54 +202,69 @@ def display_comprehensive_summary(console, all_results, model_target_domain):
             str(result["samples"]),
         )
 
-        # Track performance for analysis (only trained target vs other targets, excluding source)
-        if dataset_name == model_target_domain:
-            target_performance = result["accuracy"]
-        elif (
-            dataset_name != "NF-BoT-IoT-v2"
-        ):  # Exclude source domain from cross-domain analysis
+        # Track performance for analysis (target domains vs source domains)
+        if dataset_name == model_target_domain or dataset_name == "NF-BoT-IoT-v2":
+            # This is a target domain (not used in training)
+            if dataset_name == model_target_domain:
+                target_performance = result["accuracy"]
             cross_domain_performances.append(result["accuracy"])
+        else:
+            # This is a source domain (used in training) - don't include in cross-domain analysis
+            pass
 
     console.print(summary_table)
 
     # Domain Generalization Analysis
     if target_performance is not None and cross_domain_performances:
-        avg_cross_domain = np.mean(cross_domain_performances)
+        # Calculate average target domain performance (excluding the main target)
+        other_target_performances = [
+            perf
+            for i, perf in enumerate(cross_domain_performances)
+            if cross_domain_performances != target_performance or i > 0
+        ]
+
+        if other_target_performances:
+            avg_cross_domain = np.mean(other_target_performances)
+        else:
+            avg_cross_domain = np.mean(cross_domain_performances)
+
         performance_drop = target_performance - avg_cross_domain
 
-        analysis_table = Table(title="🔬 Domain Generalization Analysis")
+        analysis_table = Table(title="🔬 Multi-Source Domain Generalization Analysis")
         analysis_table.add_column("Metric", style="cyan")
         analysis_table.add_column("Value", style="green")
         analysis_table.add_column("Interpretation", style="yellow")
 
         analysis_table.add_row(
-            "Target Domain Performance",
+            "Main Target Performance",
             f"{target_performance:.4f}",
-            "Baseline performance",
+            "Performance on designated target domain",
         )
         analysis_table.add_row(
-            "Avg Other Target Performance",
+            "Avg Target Domain Performance",
             f"{avg_cross_domain:.4f}",
-            "Generalization to other targets",
+            "Average performance on all target domains",
         )
         analysis_table.add_row(
-            "Performance Drop",
+            "Performance Difference",
             f"{performance_drop:.4f}",
-            "Target vs other targets difference",
+            "Main target vs other target domains",
         )
 
         # Generalization quality assessment
-        if performance_drop < 0.1:
+        if abs(performance_drop) < 0.1:
             quality = "🌟 Excellent"
-        elif performance_drop < 0.2:
+        elif abs(performance_drop) < 0.2:
             quality = "✅ Good"
-        elif performance_drop < 0.3:
+        elif abs(performance_drop) < 0.3:
             quality = "⚠️ Moderate"
         else:
             quality = "❌ Poor"
 
         analysis_table.add_row(
-            "Generalization Quality", quality, "Cross-target adaptation effectiveness"
+            "Generalization Quality",
+            quality,
+            "Multi-source to target adaptation effectiveness",
         )
 
         console.print(analysis_table)
@@ -326,10 +343,18 @@ def export_comprehensive_results(
         "summary_statistics": summary_stats,
         "individual_dataset_results": all_results,
         "domain_generalization_analysis": {
-            "note": "This evaluation tests the model's ability to generalize across different network domains",
-            "target_domain": model_target_domain,
-            "cross_domain_datasets": [
-                k for k in all_results.keys() if k != model_target_domain
+            "note": "Multi-source training evaluation: model trained on source domains, evaluated on target domains",
+            "main_target_domain": model_target_domain,
+            "always_target_domain": "NF-BoT-IoT-v2",
+            "source_domains": [
+                k
+                for k in all_results.keys()
+                if k != model_target_domain and k != "NF-BoT-IoT-v2"
+            ],
+            "target_domains": [
+                k
+                for k in all_results.keys()
+                if k == model_target_domain or k == "NF-BoT-IoT-v2"
             ],
         },
     }
