@@ -1,13 +1,29 @@
-
 import pytest
-import torch
-from torch.utils.data import DataLoader
+import sys
 from pathlib import Path
 import numpy as np
 
-# Assuming skripsi_code is in PYTHONPATH
-from skripsi_code.utils.dataloader import random_split_dataloader
-from skripsi_code.utils.domain_dataset import MultiChunkParquet
+# Add project root to path
+project_root = Path(__file__).parent.parent.parent
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+    sys.path.insert(0, str(project_root / "src"))
+
+# Import with proper error handling
+try:
+    import torch
+    from torch.utils.data import DataLoader
+
+    TORCH_AVAILABLE = True
+except ImportError:
+    TORCH_AVAILABLE = False
+    pytest.skip("PyTorch not available", allow_module_level=True)
+
+try:
+    from skripsi_code.utils.dataloader import random_split_dataloader
+    from skripsi_code.utils.domain_dataset import MultiChunkParquet
+except ImportError as e:
+    pytest.skip(f"Required modules not available: {e}", allow_module_level=True)
 
 # Define paths relative to the project root for testing purposes
 # These paths should ideally point to small, dummy data for quick tests
@@ -31,6 +47,7 @@ TEST_DATA_PATH = Path(__file__).parent.parent / "data" / "parquet"
 TEST_SOURCE_DOMAINS = ["NF-BoT-IoT-v2", "NF-CSE-CIC-IDS2018-v2"]
 TEST_TARGET_DOMAIN = "NF-ToN-IoT-v2"
 
+
 @pytest.fixture(scope="module")
 def dummy_parquet_data():
     """
@@ -41,11 +58,16 @@ def dummy_parquet_data():
     for domain in TEST_SOURCE_DOMAINS + [TEST_TARGET_DOMAIN]:
         domain_path = TEST_DATA_PATH / domain
         if not domain_path.exists():
-            pytest.skip(f"Test data directory not found: {domain_path}. Please ensure dummy parquet data is available.")
+            pytest.skip(
+                f"Test data directory not found: {domain_path}. Please ensure dummy parquet data is available."
+            )
         # Further check: ensure there's at least one .parquet file in each directory
         if not any(domain_path.glob("*.parquet")):
-            pytest.skip(f"No parquet files found in {domain_path}. Please ensure dummy parquet data is available.")
+            pytest.skip(
+                f"No parquet files found in {domain_path}. Please ensure dummy parquet data is available."
+            )
     return True
+
 
 def test_multichunkparquet_initialization(dummy_parquet_data):
     """Test MultiChunkParquet dataset initialization."""
@@ -55,17 +77,18 @@ def test_multichunkparquet_initialization(dummy_parquet_data):
     dataset = MultiChunkParquet(
         dir_path=str(TEST_DATA_PATH),
         directories=TEST_SOURCE_DOMAINS,
-        domain="test_domain", # This can be a placeholder
+        domain="test_domain",  # This can be a placeholder
         get_domain=True,
         get_cluster=True,
         chunk_mode=True,
-        buffer_size=2
+        buffer_size=2,
     )
     assert isinstance(dataset, MultiChunkParquet)
     assert dataset.chunk_count > 0
     assert dataset.length > 0
     assert dataset.domain_label is not None
     assert dataset.cluster_label is not None
+
 
 def test_multichunkparquet_getitem(dummy_parquet_data):
     """Test __getitem__ method of MultiChunkParquet dataset."""
@@ -79,38 +102,41 @@ def test_multichunkparquet_getitem(dummy_parquet_data):
         get_domain=True,
         get_cluster=True,
         chunk_mode=True,
-        buffer_size=2
+        buffer_size=2,
     )
-    
+
     # Test fetching a single item (chunk)
     features, labels, domain_labels, cluster_labels = dataset[0]
     assert isinstance(features, torch.Tensor)
     assert isinstance(labels, torch.Tensor)
     assert isinstance(domain_labels, np.ndarray)
     assert isinstance(cluster_labels, np.ndarray)
-    assert features.shape[0] > 0 # Ensure chunk is not empty
+    assert features.shape[0] > 0  # Ensure chunk is not empty
     assert labels.shape[0] > 0
     assert domain_labels.shape[0] > 0
     assert cluster_labels.shape[0] > 0
     assert features.dtype == torch.float32
     assert labels.dtype == torch.int64
 
+
 def test_random_split_dataloader(dummy_parquet_data):
     """Test random_split_dataloader function."""
     if not dummy_parquet_data:
         pytest.skip("Dummy parquet data not available.")
 
-    source_train_loader, source_val_loader, target_test_loader = random_split_dataloader(
-        dir_path=str(TEST_DATA_PATH),
-        source_dir=TEST_SOURCE_DOMAINS,
-        target_dir=TEST_TARGET_DOMAIN,
-        source_domain=TEST_SOURCE_DOMAINS,
-        target_domain=[TEST_TARGET_DOMAIN],
-        get_domain=True,
-        get_cluster=True,
-        batch_size=16,
-        n_workers=0, # Use 0 workers for easier debugging in tests
-        chunk=True
+    source_train_loader, source_val_loader, target_test_loader = (
+        random_split_dataloader(
+            dir_path=str(TEST_DATA_PATH),
+            source_dir=TEST_SOURCE_DOMAINS,
+            target_dir=TEST_TARGET_DOMAIN,
+            source_domain=TEST_SOURCE_DOMAINS,
+            target_domain=[TEST_TARGET_DOMAIN],
+            get_domain=True,
+            get_cluster=True,
+            batch_size=16,
+            n_workers=0,  # Use 0 workers for easier debugging in tests
+            chunk=True,
+        )
     )
 
     assert isinstance(source_train_loader, DataLoader)
@@ -119,7 +145,9 @@ def test_random_split_dataloader(dummy_parquet_data):
 
     # Test if loaders are not empty (by trying to get one batch)
     try:
-        train_features, train_labels, train_domain, train_cluster = next(iter(source_train_loader))
+        train_features, train_labels, train_domain, train_cluster = next(
+            iter(source_train_loader)
+        )
         assert train_features.shape[0] > 0
         assert train_labels.shape[0] > 0
         assert train_domain.shape[0] > 0
@@ -128,7 +156,9 @@ def test_random_split_dataloader(dummy_parquet_data):
         pytest.fail("Source train dataloader is empty.")
 
     try:
-        val_features, val_labels, val_domain, val_cluster = next(iter(source_val_loader))
+        val_features, val_labels, val_domain, val_cluster = next(
+            iter(source_val_loader)
+        )
         assert val_features.shape[0] > 0
         assert val_labels.shape[0] > 0
         assert val_domain.shape[0] > 0
@@ -137,7 +167,9 @@ def test_random_split_dataloader(dummy_parquet_data):
         pytest.fail("Source validation dataloader is empty.")
 
     try:
-        test_features, test_labels, test_domain, test_cluster = next(iter(target_test_loader))
+        test_features, test_labels, test_domain, test_cluster = next(
+            iter(target_test_loader)
+        )
         assert test_features.shape[0] > 0
         assert test_labels.shape[0] > 0
         # For target, domain and cluster labels might not be explicitly returned by default
@@ -149,7 +181,7 @@ def test_random_split_dataloader(dummy_parquet_data):
     # Test data types and shapes for a batch
     assert train_features.dtype == torch.float32
     assert train_labels.dtype == torch.int64
-    assert train_features.ndim == 3 # (batch_size, chunk_size, num_features)
-    assert train_labels.ndim == 2 # (batch_size,)
-    assert train_domain.ndim == 2 # (batch_size,)
-    assert train_cluster.ndim == 2 # (batch_size,)
+    assert train_features.ndim == 3  # (batch_size, chunk_size, num_features)
+    assert train_labels.ndim == 2  # (batch_size,)
+    assert train_domain.ndim == 2  # (batch_size,)
+    assert train_cluster.ndim == 2  # (batch_size,)
