@@ -1064,38 +1064,39 @@ def train(
         model.LabelClassifier.output_nodes
     )  # Assuming this is how to get num_classes
 
-    # Initialize TorchMetrics for training
+    # Initialize TorchMetrics for training - moved to CPU to save GPU memory
     f1_metric_train = F1Score(
         task="multiclass", num_classes=num_classes, average="weighted"
-    ).to(device)
+    ).to("cpu")
     precision_metric_train = Precision(
         task="multiclass", num_classes=num_classes, average="weighted"
-    ).to(device)
+    ).to("cpu")
     recall_metric_train = Recall(
         task="multiclass", num_classes=num_classes, average="weighted"
-    ).to(device)
+    ).to("cpu")
     auroc_metric_train = AUROC(
         task="multiclass", num_classes=num_classes, average="weighted"
-    ).to(device)
+    ).to("cpu")
     avg_precision_metric_train = AveragePrecision(
         task="multiclass", num_classes=num_classes, average="weighted"
-    ).to(device)
+    ).to("cpu")
     mcc_metric_train = MatthewsCorrCoef(task="multiclass", num_classes=num_classes).to(
-        device
+        "cpu"
     )
     sensitivity_metric_train = Recall(
         task="multiclass", num_classes=num_classes, average="weighted"
-    ).to(device)  # Sensitivity is Recall
+    ).to("cpu")  # Sensitivity is Recall
     specificity_metric_train = Specificity(
         task="multiclass", num_classes=num_classes, average="weighted"
-    ).to(device)
+    ).to("cpu")
     conf_matrix_train = ConfusionMatrix(task="multiclass", num_classes=num_classes).to(
-        device
+        "cpu"
     )
 
-    all_labels_tensor = torch.tensor([], dtype=torch.long, device=device)
-    all_predictions_tensor = torch.tensor([], dtype=torch.long, device=device)
-    all_predictions_proba_tensor = torch.tensor([], dtype=torch.float, device=device)
+    # Use lists instead of tensors to avoid GPU memory accumulation
+    all_labels_list = []
+    all_predictions_list = []
+    all_predictions_proba_list = []
 
     # Calculate total batches for progress tracking
     total_train_batches = total_batches or (
@@ -1251,24 +1252,23 @@ def train(
             scaler.step(optimizer)
         scaler.update()
 
-        all_labels_tensor = torch.cat((all_labels_tensor, class_label))
-        all_predictions_tensor = torch.cat((all_predictions_tensor, pred_class))
-        all_predictions_proba_tensor = torch.cat(
-            (
-                all_predictions_proba_tensor,
-                torch.nn.functional.softmax(output_class, dim=1),
-            )
+        # Store predictions and labels in CPU lists instead of concatenating GPU tensors
+        all_labels_list.append(class_label.cpu())
+        all_predictions_list.append(pred_class.cpu())
+        all_predictions_proba_list.append(
+            torch.nn.functional.softmax(output_class, dim=1).cpu()
         )
 
-        f1_metric_train.update(pred_class, class_label)
-        precision_metric_train.update(pred_class, class_label)
-        recall_metric_train.update(pred_class, class_label)
-        auroc_metric_train.update(output_class, class_label)
-        avg_precision_metric_train.update(output_class, class_label)
-        mcc_metric_train.update(pred_class, class_label)
-        sensitivity_metric_train.update(pred_class, class_label)
-        specificity_metric_train.update(pred_class, class_label)
-        conf_matrix_train.update(pred_class, class_label)
+        # Update metrics with CPU tensors to avoid GPU memory issues
+        f1_metric_train.update(pred_class.cpu(), class_label.cpu())
+        precision_metric_train.update(pred_class.cpu(), class_label.cpu())
+        recall_metric_train.update(pred_class.cpu(), class_label.cpu())
+        auroc_metric_train.update(output_class.cpu(), class_label.cpu())
+        avg_precision_metric_train.update(output_class.cpu(), class_label.cpu())
+        mcc_metric_train.update(pred_class.cpu(), class_label.cpu())
+        sensitivity_metric_train.update(pred_class.cpu(), class_label.cpu())
+        specificity_metric_train.update(pred_class.cpu(), class_label.cpu())
+        conf_matrix_train.update(pred_class.cpu(), class_label.cpu())
 
         # Classifier Loss
         running_loss_class += loss_class.item() * data.size(0)
@@ -1281,8 +1281,8 @@ def train(
         # Entropy Loss
         running_loss_entropy += loss_entropy.item() * data.size(0)
 
-        # Clear GPU cache periodically to prevent memory buildup
-        if batch_count % 10 == 0:  # Clear every 10 batches
+        # Clear GPU cache more frequently to prevent memory buildup
+        if batch_count % 3 == 0:  # Clear every 3 batches instead of 10
             torch.cuda.empty_cache()
 
     # Class Loss on Epoch

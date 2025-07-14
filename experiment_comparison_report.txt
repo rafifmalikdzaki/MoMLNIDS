@@ -1,0 +1,301 @@
+MoMLNIDS Experiment Comparison Report
+==================================================
+Generated on: 2025-07-14 09:53:15
+
+
+Training_results
+----------------
+
+Experiment: NF-UNSW-NB15-v2_NSingleLayer|1-N
+  Dataset: NF-UNSW-NB15-v2
+  Method: SingleLayer
+  Clusters: None
+  Best Accuracy: 0.9482 (Epoch 14)
+  Best F1 Score: 0.9391
+  Final Accuracy: 0.8755
+
+Experiment: NF-CSE-CIC-IDS2018-v2_NSingleLayer|1-N
+  Dataset: NF-CSE-CIC-IDS2018-v2
+  Method: SingleLayer
+  Clusters: None
+  Best Accuracy: 0.3230 (Epoch 4)
+  Best F1 Score: 0.4159
+  Final Accuracy: 0.3129
+
+Experiment: NF-ToN-IoT-v2_NSingleLayer|1-N
+  Dataset: NF-ToN-IoT-v2
+  Method: SingleLayer
+  Clusters: None
+  Best Accuracy: 0.4741 (Epoch 0)
+  Best F1 Score: 0.4192
+  Final Accuracy: 0.3794
+
+Experiment: NF-CSE-CIC-IDS2018-v2_NSingleLayer|1-Domain_weigth
+  Dataset: NF-CSE-CIC-IDS2018-v2
+  Method: SingleLayer
+  Clusters: None
+  Best Accuracy: 0.5419 (Epoch 18)
+  Best F1 Score: 0.6133
+  Final Accuracy: 0.1820
+
+Experiment: NF-ToN-IoT-v2_NSingleLayer|1-Domain_weigth
+  Dataset: NF-ToN-IoT-v2
+  Method: SingleLayer
+  Clusters: None
+  Best Accuracy: 0.4654 (Epoch 0)
+  Best F1 Score: 0.4083
+  Final Accuracy: 0.3948
+
+Experiment: NF-UNSW-NB15-v2_NSingleLayer|1-Domain_weigth
+  Dataset: NF-UNSW-NB15-v2
+  Method: SingleLayer
+  Clusters: None
+  Best Accuracy: 0.9539 (Epoch 9)
+  Best F1 Score: 0.9387
+  Final Accuracy: 0.8930
+
+Experiment: NF-UNSW-NB15-v2_NSingleLayer|10-10-10-10|1-N
+  Dataset: NF-UNSW-NB15-v2
+  Method: SingleLayer
+  Clusters: None
+  Best Accuracy: 0.9395 (Epoch 6)
+  Best F1 Score: 0.9329
+  Final Accuracy: 0.9082
+
+Experiment: NF-CSE-CIC-IDS2018-v2_NSingleLayer|10-10-10-10|1-N
+  Dataset: NF-CSE-CIC-IDS2018-v2
+  Method: SingleLayer
+  Clusters: None
+  Best Accuracy: 0.1891 (Epoch 2)
+  Best F1 Score: 0.1718
+  Final Accuracy: 0.1552
+
+Experiment: NF-ToN-IoT-v2_NSingleLayer|10-10-10-10|1-N
+  Dataset: NF-ToN-IoT-v2
+  Method: SingleLayer
+  Clusters: None
+  Best Accuracy: 0.4655 (Epoch 0)
+  Best F1 Score: 0.4047
+  Final Accuracy: 0.4173
+
+Experiment: NF-UNSW-NB15-v2_NSingleLayer|10-10-10-10|1-DomainWeight
+  Dataset: NF-UNSW-NB15-v2
+  Method: SingleLayer
+  Clusters: None
+  Best Accuracy: 0.9475 (Epoch 1)
+  Best F1 Score: 0.9364
+  Final Accuracy: 0.8186
+
+Experiment: NF-CSE-CIC-IDS2018-v2_NSingleLayer|10-10-10-10|1-DomainWeight
+  Dataset: NF-CSE-CIC-IDS2018-v2
+  Method: SingleLayer
+  Clusters: None
+  Best Accuracy: 0.3250 (Epoch 1)
+  Best F1 Score: 0.4196
+  Final Accuracy: 0.1669
+
+Experiment: NF-ToN-IoT-v2_NSingleLayer|10-10-10-10|1-DomainWeight
+  Dataset: NF-ToN-IoT-v2
+  Method: SingleLayer
+  Clusters: None
+  Best Accuracy: 0.4778 (Epoch 0)
+  Best F1 Score: 0.4261
+  Final Accuracy: 0.4028
+
+Experiment: NF-UNSW-NB15-v2_NSingleLayer|No-Weighting
+  Dataset: NF-UNSW-NB15-v2
+  Method: SingleLayer
+  Clusters: None
+  Best Accuracy: 0.9439 (Epoch 19)
+  Best F1 Score: 0.9353
+  Final Accuracy: 0.9439
+
+Experiment: NF-CSE-CIC-IDS2018-v2_NSingleLayer|No-Weighting
+  Dataset: NF-CSE-CIC-IDS2018-v2
+  Method: SingleLayer
+  Clusters: None
+  Best Accuracy: 0.1796 (Epoch 2)
+  Best F1 Score: 0.1528
+  Final Accuracy: 0.1607
+
+Experiment: NF-ToN-IoT-v2_NSingleLayer|No-Weighting
+  Dataset: NF-ToN-IoT-v2
+  Method: SingleLayer
+  Clusters: None
+  Best Accuracy: 0.4563 (Epoch 1)
+  Best F1 Score: 0.3904
+  Final Accuracy: 0.4453
+
+ProperTraining
+--------------
+
+Experiment: NF-UNSW-NB15-v2_N|PseudoLabelling|Cluster_2
+  Dataset: NF-UNSW-NB15-v2
+  Method: PseudoLabelling
+  Clusters: 2
+  Best Accuracy: 0.8527 (Epoch 2)
+  Best F1 Score: 0.8876
+  Final Accuracy: 0.8364
+
+Experiment: NF-UNSW-NB15-v2_N|PseudoLabelling|Cluster_3
+  Dataset: NF-UNSW-NB15-v2
+  Method: PseudoLabelling
+  Clusters: 3
+  Best Accuracy: 0.8652 (Epoch 5)
+  Best F1 Score: 0.8941
+  Final Accuracy: 0.7395
+
+Experiment: NF-UNSW-NB15-v2_N|PseudoLabelling|Cluster_5
+  Dataset: NF-UNSW-NB15-v2
+  Method: PseudoLabelling
+  Clusters: 5
+  Best Accuracy: 0.9602 (Epoch 12)
+  Best F1 Score: 0.9424
+  Final Accuracy: 0.9584
+
+Experiment: NF-UNSW-NB15-v2_N|PseudoLabelling|Cluster_4
+  Dataset: NF-UNSW-NB15-v2
+  Method: PseudoLabelling
+  Clusters: 4
+  Best Accuracy: 0.8813 (Epoch 1)
+  Best F1 Score: 0.9042
+  Final Accuracy: 0.7471
+
+Experiment: NF-UNSW-NB15-v2_N|PseudoLabelling|Cluster_6
+  Dataset: NF-UNSW-NB15-v2
+  Method: PseudoLabelling
+  Clusters: 6
+  Best Accuracy: 0.9614 (Epoch 0)
+  Best F1 Score: 0.9490
+  Final Accuracy: 0.7215
+
+Experiment: NF-UNSW-NB15-v2_N|PseudoLabelling|
+  Dataset: NF-UNSW-NB15-v2
+  Method: PseudoLabelling
+  Clusters: None
+
+Experiment: NF-CSE-CIC-IDS2018-v2_N|PseudoLabelling|Cluster_2
+  Dataset: NF-CSE-CIC-IDS2018-v2
+  Method: PseudoLabelling
+  Clusters: 2
+  Best Accuracy: 0.2610 (Epoch 19)
+  Best F1 Score: 0.2759
+  Final Accuracy: 0.2610
+
+Experiment: NF-CSE-CIC-IDS2018-v2_N|PseudoLabelling|Cluster_3
+  Dataset: NF-CSE-CIC-IDS2018-v2
+  Method: PseudoLabelling
+  Clusters: 3
+  Best Accuracy: 0.5856 (Epoch 19)
+  Best F1 Score: 0.6555
+  Final Accuracy: 0.5856
+
+Experiment: NF-CSE-CIC-IDS2018-v2_N|PseudoLabelling|Cluster_4
+  Dataset: NF-CSE-CIC-IDS2018-v2
+  Method: PseudoLabelling
+  Clusters: 4
+  Best Accuracy: 0.6161 (Epoch 19)
+  Best F1 Score: 0.6798
+  Final Accuracy: 0.6161
+
+Experiment: NF-CSE-CIC-IDS2018-v2_N|PseudoLabelling|Cluster_5
+  Dataset: NF-CSE-CIC-IDS2018-v2
+  Method: PseudoLabelling
+  Clusters: 5
+  Best Accuracy: 0.5034 (Epoch 17)
+  Best F1 Score: 0.5903
+  Final Accuracy: 0.3758
+
+Experiment: NF-ToN-IoT-v2_N|PseudoLabelling|Cluster_2
+  Dataset: NF-ToN-IoT-v2
+  Method: PseudoLabelling
+  Clusters: 2
+  Best Accuracy: 0.4715 (Epoch 0)
+  Best F1 Score: 0.4140
+  Final Accuracy: 0.3597
+
+Experiment: NF-ToN-IoT-v2_N|PseudoLabelling|Cluster_3
+  Dataset: NF-ToN-IoT-v2
+  Method: PseudoLabelling
+  Clusters: 3
+  Best Accuracy: 0.4430 (Epoch 0)
+  Best F1 Score: 0.3678
+  Final Accuracy: 0.3908
+
+Experiment: NF-ToN-IoT-v2_N|PseudoLabelling|Cluster_4
+  Dataset: NF-ToN-IoT-v2
+  Method: PseudoLabelling
+  Clusters: 4
+  Best Accuracy: 0.4389 (Epoch 1)
+  Best F1 Score: 0.3551
+  Final Accuracy: 0.3587
+
+Experiment: NF-ToN-IoT-v2_N|PseudoLabelling|Cluster_5
+  Dataset: NF-ToN-IoT-v2
+  Method: PseudoLabelling
+  Clusters: 5
+  Best Accuracy: 0.4494 (Epoch 0)
+  Best F1 Score: 0.3788
+  Final Accuracy: 0.3587
+
+ProperTraining50Epoch
+---------------------
+
+Experiment: NF-CSE-CIC-IDS2018-v2_N|PseudoLabelling|Cluster_4
+  Dataset: NF-CSE-CIC-IDS2018-v2
+  Method: PseudoLabelling
+  Clusters: 4
+  Best Accuracy: 0.6471 (Epoch 32)
+  Best F1 Score: 0.7084
+  Final Accuracy: 0.3302
+
+Experiment: NF-CSE-CIC-IDS2018-v2_N|PseudoLabelling|Cluster_5
+  Dataset: NF-CSE-CIC-IDS2018-v2
+  Method: PseudoLabelling
+  Clusters: 5
+  Best Accuracy: 0.6451 (Epoch 48)
+  Best F1 Score: 0.7013
+  Final Accuracy: 0.4446
+
+Experiment: NF-UNSW-NB15-v2_N|PseudoLabelling|Cluster_4
+  Dataset: NF-UNSW-NB15-v2
+  Method: PseudoLabelling
+  Clusters: 4
+  Best Accuracy: 0.9438 (Epoch 38)
+  Best F1 Score: 0.9343
+  Final Accuracy: 0.9172
+
+Experiment: NF-ToN-IoT-v2_N|PseudoLabelling|Cluster_4
+  Dataset: NF-ToN-IoT-v2
+  Method: PseudoLabelling
+  Clusters: 4
+  Best Accuracy: 0.4432 (Epoch 4)
+  Best F1 Score: 0.3677
+  Final Accuracy: 0.3587
+
+results
+-------
+
+Experiment: results_demo_experiment_results
+
+Experiment: results_final_demo_results
+
+Experiment: results_eval_NF-CSE-CIC-IDS2018-v2
+
+Experiment: results_eval_NF-ToN-IoT-v2
+
+Experiment: results_eval_NF-UNSW-NB15-v2
+
+Experiment: results_eval_NF-BoT-IoT-v2
+
+Experiment: results_comprehensive_domain_generalization
+
+Experiment: results_comprehensive_NF_CSE_CIC_IDS2018_v2_20ep
+
+Experiment: results_test_comprehensive_fixed
+
+Experiment: results_comprehensive_NF_UNSW_NB15_v2_20ep
+
+Experiment: results_comprehensive_NF_CSE_CIC_IDS2018_v2_50ep
+
+Experiment: quick_test_experiment_results
