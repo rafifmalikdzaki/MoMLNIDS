@@ -11,6 +11,8 @@ wandb:
 
 # Model configuration (optional, will override default)
 model:
+  input_nodes: 39
+  single_layer: true
   feature_extractor:
     hidden_layers: [64, 32, 16, 10]
   classifier:
@@ -49,7 +51,9 @@ training:
 
 # Data configuration (optional, will override default)
 data:
-  processed_data_path: "./skripsi_code/data/parquet/" # Ensure this is correct
+  processed_data_path: "data/parquet" # Ensure this is correct
+  domain_reweighting: [1.0, 1.0, 1.0]
+  label_reweighting: [[1.0, 1.0], [1.0, 1.0], [1.0, 1.0]]
   clustering:
     method: "MiniK" # Changed from "kmeans" to "MiniK" as used in main.py
   

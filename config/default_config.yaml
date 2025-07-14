@@ -13,6 +13,8 @@ wandb:
 
 model:
   name: "MoMLDNIDS"
+  input_nodes: 39
+  single_layer: false
   feature_extractor:
     hidden_layers: [64, 32, 16, 10]
     dropout_rate: 0.3
@@ -33,6 +35,21 @@ training:
   weight_decay: 0.0005
   domain_weight: 1.0 # Placeholder, will be calculated
   classification_weight: 1.0 # Placeholder, will be calculated
+  target_index: 0
+  experiment_num: "|Default|"
+  use_cluster: false
+  eval_step: 1
+  save_step: 2
+  extractor_weight: 1.0
+  classifier_weight: 1.0
+  discriminator_weight: 1.0
+  amsgrad: false
+  t_max: 10
+  clustering_step: 1
+  label_smooth: 0.0
+  entropy_weight: 0.0
+  grl_weight: 1.0
+  eval_batch_frequency: 1
   early_stopping:
     enabled: False
     patience: 5
@@ -50,7 +67,9 @@ data:
     - "NF-BoT-IoT-v2" # Added BoT-IoT for completeness
   raw_data_path: "./data/raw/NIDS_DATA/"
   interim_data_path: "./data/interim/"
-  processed_data_path: "./skripsi_code/data/parquet/" # This is the path to your parquet files
+  processed_data_path: "data/parquet" # This is the path to your parquet files
+  domain_reweighting: [1.0, 1.0, 1.0]
+  label_reweighting: [[1.0, 1.0], [1.0, 1.0], [1.0, 1.0]]
   preprocessing:
     normalize: True
     handle_missing: True
@@ -83,6 +102,7 @@ explainable_ai:
 
 logging:
   level: "INFO"
+  verbose: true
   format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
   file: "training.log"
 

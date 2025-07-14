@@ -35,13 +35,16 @@ model:
 
 # Training configuration (faster training)
 training:
-  batch_size: 1   # Very small batch size for ultra-fast testing
+  batch_size: 1   # Use batch size 1 consistently
   epochs: 1        # Single epoch for demo
   learning_rate: 0.01  # Higher learning rate for faster convergence
   weight_decay: 1e-4
   max_batches: 5   # Limit to 5 batches for demo
   target_index: 0
   experiment_num: "|Demo|"
+  use_cluster: false  # Disable clustering for quick test
+  eval_step: 1        # Evaluate every epoch
+  save_step: 1        # Save every epoch
   extractor_weight: 1.0
   classifier_weight: 1.0
   discriminator_weight: 1.0

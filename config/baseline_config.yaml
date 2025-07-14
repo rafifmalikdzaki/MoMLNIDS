@@ -37,9 +37,15 @@ training:
   # CRITICAL: Disable clustering to run baseline
   use_cluster: False
 
+model:
+  input_nodes: 39
+  single_layer: true
+
 # Data configuration
 data:
-  processed_data_path: "./skripsi_code/data/parquet/"
+  processed_data_path: "data/parquet"
+  domain_reweighting: [1.0, 1.0, 1.0]
+  label_reweighting: [[1.0, 1.0], [1.0, 1.0], [1.0, 1.0]]
   clustering:
     method: "none"
 

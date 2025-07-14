@@ -3,11 +3,11 @@ project:
 wandb:
   enabled: false
 training:
-  batch_size: 1
-  epochs: 1
+  batch_size: 8
+  epochs: 3
   learning_rate: 0.001
   target_index: 0
-  experiment_num: '|Demo|'
+  experiment_num: '|Memory_Test|'
   use_cluster: false
   eval_step: 1
   save_step: 1
@@ -23,7 +23,7 @@ training:
   grl_weight: 1.0
   eval_batch_frequency: 1
 data:
-  processed_data_path: data/parquet
+  processed_data_path: /nonexistent  # Force dummy data
   domain_reweighting:
   - 1.0
   - 1.0

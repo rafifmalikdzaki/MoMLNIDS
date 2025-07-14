@@ -50,7 +50,108 @@ def get_optimizer(model, init_lr, weight_decay=0.01, amsgrad=True):
 
 
 def get_learning_rate_scheduler(optimizer, t_max=25):
-    return CosineAnnealingLR(optimizer, t_max, eta_min=1e-5)
+    return optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=t_max)
+
+
+def create_experiment_directory(
+    base_dir="ProperTraining",
+    target_domain=None,
+    experiment_name=None,
+    use_clustering=False,
+    cluster_num=None,
+    epochs=None,
+    timestamp=None,
+):
+    """
+    Create clean, organized experiment directory structure.
+
+    New Format:
+    Training_Sessions/ProperTraining_20Epochs_20250714_0930/NF-CSE-CIC-IDS2018-v2/Demo_Cluster4/
+
+    Components:
+    - Training_Sessions: Root directory for all training sessions
+    - ProperTraining_20Epochs_20250714_0930: Session (Method_Epochs_Date_Time)
+    - NF-CSE-CIC-IDS2018-v2: Target domain
+    - Demo_Cluster4: Experiment name with cluster info
+
+    Subdirectories created:
+    - models/: Model checkpoints
+    - logs/: Log files
+    - results/: Analysis results
+    """
+    from pathlib import Path
+    from datetime import datetime
+
+    # Generate clean timestamp if not provided
+    if timestamp is None:
+        now = datetime.now()
+        timestamp = now.strftime("%Y%m%d_%H%M")  # Format: 20250714_0930
+
+    # Create clear session directory name
+    if epochs:
+        session_name = f"{base_dir}_{epochs}Epochs_{timestamp}"
+    else:
+        session_name = f"{base_dir}_{timestamp}"
+
+    # Create clean experiment name
+    experiment_parts = []
+    if experiment_name:
+        experiment_parts.append(experiment_name)
+    if use_clustering and cluster_num is not None:
+        experiment_parts.append(f"Cluster{cluster_num}")
+
+    if experiment_parts:
+        experiment_dir_name = "_".join(experiment_parts)
+    else:
+        experiment_dir_name = "Default"
+
+    # Create organized path structure
+    full_path = (
+        Path("Training_Sessions") / session_name / target_domain / experiment_dir_name
+    )
+
+    # Create directory structure with subdirectories
+    full_path.mkdir(parents=True, exist_ok=True)
+
+    # Create standard subdirectories for organization
+    (full_path / "models").mkdir(exist_ok=True)
+    (full_path / "logs").mkdir(exist_ok=True)
+    (full_path / "results").mkdir(exist_ok=True)
+
+    return full_path
+
+
+def get_experiment_log_files(experiment_dir):
+    """Get organized log file paths for an experiment directory."""
+    from pathlib import Path
+
+    experiment_dir = Path(experiment_dir)
+    logs_dir = experiment_dir / "logs"
+
+    return {
+        "source_trained": logs_dir / "source_trained.log",
+        "val_performance": logs_dir / "val_performance.log",
+        "target_performance": logs_dir / "target_performance.log",
+        "clustering": logs_dir / "clustering.log",
+        "training": logs_dir / "training.log",
+        "final_val": logs_dir / "final_val_performance.log",
+        "final_target": logs_dir / "final_target_performance.log",
+    }
+
+
+def get_model_checkpoint_path(experiment_dir, epoch=None, is_best=False):
+    """Get model checkpoint path in organized structure."""
+    from pathlib import Path
+
+    experiment_dir = Path(experiment_dir)
+    models_dir = experiment_dir / "models"
+
+    if is_best:
+        return models_dir / "best_model.pth"
+    elif epoch is not None:
+        return models_dir / f"model_epoch_{epoch:03d}.pth"
+    else:
+        return models_dir / "model_latest.pth"
 
 
 def demo_utils():
@@ -173,5 +274,3 @@ def main(demo, test_domain, test_optimizer):
 
     else:
         console.print("Use --demo, --test-domain, or --test-optimizer")
-
-
