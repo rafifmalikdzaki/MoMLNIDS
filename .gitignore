@@ -3,6 +3,8 @@
 **/*/wandb/
 lap_skripsi/
 
+# Backup files
+*.backup
 
 __pycache__/
 *.py[cod]
