@@ -320,14 +320,14 @@ def main():
                 batch_size=BATCH_SIZE,  # Use config batch size consistently
                 shuffle=False,
                 num_workers=NUM_WORKERS,
-                drop_last=True,
+                drop_last=False,  # Don't drop last batch for validation
             )
             target_test = DataLoader(
                 test_dataset,
                 batch_size=BATCH_SIZE,  # Use config batch size consistently
                 shuffle=False,
                 num_workers=NUM_WORKERS,
-                drop_last=True,
+                drop_last=False,  # Don't drop last batch for testing
             )
 
             print(f"🎭 Created dummy data:")
@@ -537,6 +537,62 @@ def main():
         finally:
             # Ensure display is properly closed
             finish_dynamic_display()
+
+        # Load and evaluate best model to get all metrics
+        print("\n" + "=" * 80)
+        print("🏆 BEST MODEL PERFORMANCE SUMMARY")
+        print("=" * 80)
+
+        # Load best model
+        best_model_path = get_model_checkpoint_path(experiment_dir, is_best=True)
+        if Path(best_model_path).exists():
+            model.load_state_dict(torch.load(best_model_path))
+            print(f"📁 Loaded best model from: {best_model_path}")
+
+            # Evaluate on validation and test sets with full metrics
+            import torch.nn as nn
+
+            criterion = nn.CrossEntropyLoss()
+
+            print(f"\n🔍 VALIDATION METRICS (Best Epoch {best_epoch + 1}):")
+            print("-" * 60)
+            val_accuracy, val_metrics = eval(
+                model=model,
+                eval_data=source_val,
+                criterion=criterion,
+                device=device,
+                num_epoch=NUM_EPOCH,
+                filename=log_files["val_performance"],
+                wandb_enabled=False,  # Disable wandb for final eval
+                epoch=best_epoch,
+                verbose=True,  # Enable verbose to show all metrics
+            )
+
+            # Print detailed validation metrics
+            if val_metrics:
+                for metric_name, metric_value in val_metrics.items():
+                    print(f"  📊 {metric_name.upper()}: {metric_value:.4f}")
+
+            print(f"\n🎯 TEST METRICS (Best Epoch {best_epoch + 1}):")
+            print("-" * 60)
+            test_accuracy_final, test_metrics = eval(
+                model=model,
+                eval_data=target_test,
+                criterion=criterion,
+                device=device,
+                num_epoch=NUM_EPOCH,
+                filename=log_files["target_performance"],
+                wandb_enabled=False,  # Disable wandb for final eval
+                epoch=best_epoch,
+                verbose=True,  # Enable verbose to show all metrics
+            )
+
+            # Print detailed test metrics
+            if test_metrics:
+                for metric_name, metric_value in test_metrics.items():
+                    print(f"  📊 {metric_name.upper()}: {metric_value:.4f}")
+
+        print("\n" + "=" * 80)
 
         # Display training summary
         from skripsi_code.TrainEval.TrainEval import display_training_summary
