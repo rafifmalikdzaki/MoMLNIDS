@@ -1,0 +1,62 @@
+# Experiment Configuration - Override specific values from default_config.yaml
+
+# Project settings (optional, will override default)
+project:
+  name: "MoMLNIDS_Experiment"
+
+# Wandb settings (optional, will override default)
+wandb:
+  enabled: False
+  tags: ["experiment", "pseudolabelling"]
+
+# Model configuration (optional, will override default)
+model:
+  input_nodes: 39
+  single_layer: true
+  feature_extractor:
+    hidden_layers: [64, 32, 16, 10]
+  classifier:
+    hidden_layers: [64, 32, 16]
+  discriminator:
+    hidden_layers: [64, 32, 16] # Assuming discriminator hidden layers are same as classifier for this experiment
+
+# Training configuration (optional, will override default)
+training:
+  batch_size: 1
+  epochs: 20
+  learning_rate: 0.0015
+  weight_decay: 0.0005
+  # domain_weight and classification_weight are calculated dynamically in the script
+  # based on domain_reweighting and label_reweighting from default_config.yaml
+  
+  # Parameters from original 'experiment' section
+  verbose: False
+  single_layer: True
+  target_index: 0 # This will be iterated in main_config.py
+  experiment_num: "|PseudoLabelling|"
+  eval_step: 1
+  save_step: 2
+  entropy_weight: 1
+  grl_weight: 1.25
+  label_smooth: 0.1
+  amsgrad: True
+  t_max: 10
+  num_clusters: 4
+  num_classes: 2
+  clustering_step: 2
+  input_nodes: 39
+  use_cluster: True
+  eval_batch_frequency: 10000
+  gradient_clip_norm: 10000.0
+
+# Data configuration (optional, will override default)
+data:
+  processed_data_path: "./data/parquet/" # Ensure this is correct
+  domain_reweighting: [1.0, 1.0, 1.0]
+  label_reweighting: [[1.0, 1.0], [1.0, 1.0], [1.0, 1.0]]
+  clustering:
+    method: "MiniK" # Changed from "kmeans" to "MiniK" as used in main.py
+  
+# Device configuration (optional, will override default)
+device:
+  num_workers: 0 # Set to 0 for easier debugging, increase for performance

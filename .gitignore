@@ -1,6 +1,10 @@
 # Byte-compiled / optimized / DLL files
 
-skripsi_code/data/
+**/*/wandb/
+lap_skripsi/
+
+# Backup files
+*.backup
 
 __pycache__/
 *.py[cod]
@@ -166,10 +170,11 @@ cython_debug/
 
 
 # Project specific - exclude large files and training results
-skripsi_code/data/
 ProperTraining/
 ProperTraining50Epoch/
 Training_results/
+**/Training_Sessions/*
+**/results/
 *.pt
 *.pth
 *.zip
@@ -178,7 +183,6 @@ Training_results/
 *.log
 *.csv
 *.npy
-data/
 uv.lock
 
 # Model checkpoints and weights
@@ -195,3 +199,6 @@ model_best.pt
 *.ipynb
 
 # folders
+.aider*
+wandb/
+skripsi_code/figures/

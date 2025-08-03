@@ -1,0 +1,271 @@
+name: Enhanced Features Test
+
+on:
+  push:
+    branches: [ feature/improved-project-structure ]
+    paths:
+      - 'skripsi_code/config/**'
+      - 'skripsi_code/experiment/**'
+      - 'skripsi_code/explainability/**'
+      - 'config/**'
+      - 'main_improved.py'
+      - 'requirements*.txt'
+      - 'requirements*.in'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'skripsi_code/config/**'
+      - 'skripsi_code/experiment/**'
+      - 'skripsi_code/explainability/**'
+      - 'config/**'
+      - 'main_improved.py'
+
+jobs:
+  test-enhanced-features:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        version: "latest"
+    
+    - name: Cache uv dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/uv
+          .venv
+        key: enhanced-${{ runner.os }}-uv-python${{ matrix.python-version }}-${{ hashFiles('requirements.txt', 'requirements.in', 'uv.lock') }}
+        restore-keys: |
+          enhanced-${{ runner.os }}-uv-python${{ matrix.python-version }}-
+          enhanced-${{ runner.os }}-uv-
+    
+    - name: Create virtual environment and install dependencies
+      run: |
+        uv venv --python ${{ matrix.python-version }}
+        uv pip install -r requirements.txt
+        # Install all optional dependencies for comprehensive testing
+        uv pip install shap lime
+    
+    - name: Install package in development mode
+      run: |
+        uv pip install -e .
+    
+    - name: Test configuration management
+      run: |
+        echo "Testing configuration loading..."
+        uv run python -c "
+        from skripsi_code.config import get_config, load_config
+        import yaml
+        
+        # Test default config loading
+        config = get_config()
+        print(f'Default config loaded: {config.project[\"name\"]}')
+        
+        # Test custom config loading
+        config = load_config('config/quick_test_config.yaml')
+        print(f'Quick test config loaded: {config.project[\"name\"]}')
+        
+        # Test configuration validation
+        from skripsi_code.config import ConfigManager
+        manager = ConfigManager()
+        assert manager.validate_config(config), 'Configuration validation failed'
+        print('Configuration validation passed')
+        "
+    
+    - name: Test experiment tracking (without wandb)
+      run: |
+        echo "Testing experiment tracking module..."
+        uv run python -c "
+        from skripsi_code.experiment import ExperimentTracker, MetricsLogger
+        from skripsi_code.config import get_config
+        import numpy as np
+        
+        # Test with wandb disabled
+        config = get_config()
+        config.wandb['enabled'] = False
+        
+        tracker = ExperimentTracker(config)
+        tracker.init_experiment('test-experiment')
+        
+        # Test metrics logging
+        metrics = {'accuracy': 0.95, 'loss': 0.05}
+        tracker.log_metrics(metrics)
+        
+        # Test performance logging
+        y_true = np.array([0, 1, 0, 1, 0])
+        y_pred = np.array([0, 1, 1, 1, 0])
+        y_prob = np.array([[0.9, 0.1], [0.2, 0.8], [0.4, 0.6], [0.1, 0.9], [0.8, 0.2]])
+        
+        perf_metrics = tracker.log_model_performance(y_true, y_pred, y_prob)
+        print(f'Performance metrics: {perf_metrics}')
+        
+        tracker.finish_experiment()
+        print('Experiment tracking test passed')
+        "
+    
+    - name: Test explainable AI module
+      run: |
+        echo "Testing explainable AI module..."
+        uv run python -c "
+        from skripsi_code.explainability import ModelExplainer
+        import torch
+        import torch.nn as nn
+        import numpy as np
+        
+        # Create a simple model for testing
+        class SimpleModel(nn.Module):
+            def __init__(self):
+                super().__init__()
+                self.layers = nn.Sequential(
+                    nn.Linear(10, 5),
+                    nn.ReLU(),
+                    nn.Linear(5, 2)
+                )
+            
+            def forward(self, x):
+                return self.layers(x)
+        
+        model = SimpleModel()
+        model.eval()
+        
+        feature_names = [f'feature_{i}' for i in range(10)]
+        explainer = ModelExplainer(model, feature_names)
+        
+        # Test instance explanation
+        instance = np.random.randn(10)
+        explanation = explainer.explain_instance(instance, method='feature_ablation')
+        print(f'Feature ablation completed: {len(explanation[\"attributions\"])} features')
+        
+        # Test global explanation
+        X_sample = np.random.randn(50, 10)
+        global_exp = explainer.explain_global(X_sample, method='feature_importance')
+        print(f'Global feature importance computed: {len(global_exp[\"importance_scores\"])} features')
+        
+        print('Explainable AI test passed')
+        "
+    
+    - name: Test improved main script imports
+      run: |
+        echo "Testing main script imports..."
+        uv run python -c "
+        # Test all imports from main_improved.py
+        from skripsi_code.config import Config, load_config, get_config
+        from skripsi_code.experiment import ExperimentTracker, MetricsLogger
+        from skripsi_code.explainability import ModelExplainer, visualize_feature_importance
+        from skripsi_code.model import MoMLNIDS
+        
+        print('All main script imports successful')
+        "
+    
+    - name: Test configuration files validity
+      run: |
+        echo "Testing configuration files..."
+        uv run python -c "
+        import yaml
+        from pathlib import Path
+        
+        config_files = [
+            'config/default_config.yaml',
+            'config/quick_test_config.yaml'
+        ]
+        
+        for config_file in config_files:
+            if Path(config_file).exists():
+                with open(config_file, 'r') as f:
+                    config = yaml.safe_load(f)
+                print(f'{config_file}: Valid YAML with {len(config)} top-level keys')
+            else:
+                print(f'{config_file}: File not found')
+        "
+    
+    - name: Test main script help
+      run: |
+        echo "Testing main script help output..."
+        uv run python main_improved.py --help
+    
+    - name: Test package structure
+      run: |
+        echo "Testing package structure..."
+        uv run python -c "
+        import skripsi_code
+        import skripsi_code.config
+        import skripsi_code.experiment
+        import skripsi_code.explainability
+        
+        # Test that all modules are importable
+        modules = [
+            'skripsi_code.config',
+            'skripsi_code.experiment', 
+            'skripsi_code.explainability',
+            'skripsi_code.model',
+            'skripsi_code.utils',
+            'skripsi_code.clustering'
+        ]
+        
+        for module in modules:
+            try:
+                __import__(module)
+                print(f'✓ {module}')
+            except ImportError as e:
+                print(f'✗ {module}: {e}')
+        
+        print('Package structure test completed')
+        "
+
+  test-with-optional-dependencies:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test-case: 
+          - name: "without-xai"
+            install: "uv pip install -r requirements.txt"
+            test: "without optional XAI dependencies"
+          - name: "with-xai"
+            install: "uv pip install -r requirements.txt && uv pip install shap lime"
+            test: "with XAI dependencies"
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        version: "latest"
+    
+    - name: Create virtual environment and install dependencies
+      run: |
+        uv venv --python 3.11
+        ${{ matrix.test-case.install }}
+        uv pip install -e .
+    
+    - name: Test configuration and experiment tracking
+      run: |
+        echo "Testing core features ${{ matrix.test-case.test }}..."
+        uv run python -c "
+        from skripsi_code.config import get_config
+        from skripsi_code.experiment import ExperimentTracker
+        
+        config = get_config()
+        config.wandb['enabled'] = False
+        config.explainable_ai['enabled'] = False
+        
+        tracker = ExperimentTracker(config)
+        print('Core features work ${{ matrix.test-case.test }}')
+        "

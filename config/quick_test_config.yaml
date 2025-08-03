@@ -1,0 +1,156 @@
+# Quick Test Configuration - Smaller scale for fast experimentation
+
+# Project settings
+project:
+  name: "nids-quick-test"
+  description: "Quick test configuration for development"
+  version: "1.0.0"
+
+# Experiment tracking (disabled for quick tests)
+wandb:
+  enabled: false  # Set to true when you want to track experiments
+  project: "nids-quick-test"
+  entity: null
+  tags: ["quick-test", "development"]
+  
+# Model configuration (smaller for faster training)
+model:
+  name: "MoMLNIDS"
+  input_nodes: 39
+  single_layer: true
+  feature_extractor:
+    hidden_layers: [64, 32]  # Smaller network
+    dropout_rate: 0.2
+    activation: "ELU"
+    
+  classifier:
+    hidden_layers: [16]  # Single hidden layer, input comes from feature extractor (32)
+    num_classes: 2
+    dropout_rate: 0.1
+    
+  discriminator:
+    hidden_layers: [32, 16]  # Smaller discriminator
+    num_domains: 4
+    dropout_rate: 0.1
+
+# Training configuration (faster training)
+training:
+  batch_size: 1   # Use batch size 1 consistently
+  epochs: 1        # Single epoch for demo
+  learning_rate: 0.01  # Higher learning rate for faster convergence
+  weight_decay: 1e-4
+  max_batches: 5   # Limit to 5 batches for demo
+  target_index: 0
+  experiment_num: "|Demo|"
+  use_cluster: false  # Disable clustering for quick test
+  eval_step: 1        # Evaluate every epoch
+  save_step: 1        # Save every epoch
+  extractor_weight: 1.0
+  classifier_weight: 1.0
+  discriminator_weight: 1.0
+  amsgrad: false
+  t_max: 10
+  clustering_step: 1
+  label_smooth: 0.0
+  entropy_weight: 0.0
+  grl_weight: 1.0
+  eval_batch_frequency: 1
+
+  # Multi-domain learning weights
+  domain_weight: 1.0
+  classification_weight: 1.0
+  
+  # Early stopping (more aggressive)
+  early_stopping:
+    enabled: true
+    patience: 3
+    min_delta: 0.01
+    
+  # Checkpoint saving
+  checkpoint:
+    save_every: 5
+    save_best: true
+  gradient_clip_norm: 10000.0
+
+# Data configuration (subset for quick testing)
+data:
+  datasets:
+    - "NF-BoT-IoT-v2"
+    - "NF-CSE-CIC-IDS2018-v2"  # Use only 2 datasets for quick testing
+    
+  # Data paths
+  raw_data_path: "data/raw"
+  interim_data_path: "data/interim"
+  processed_data_path: "data/parquet"
+  domain_reweighting: [1.0, 1.0, 1.0]
+  label_reweighting: [[1.0, 1.0], [1.0, 1.0], [1.0, 1.0]]
+  
+  # Preprocessing
+  preprocessing:
+    normalize: true
+    handle_missing: "drop"
+    feature_selection: false
+    
+  # Data splits
+  data_splits:
+    train_ratio: 0.8  # More training data
+    val_ratio: 0.1
+    test_ratio: 0.1
+  
+  # Clustering configuration
+  clustering:
+    method: "kmeans"
+    n_clusters: 5  # Fewer clusters for quick testing
+    random_state: 42
+
+# Evaluation configuration
+evaluation:
+  metrics:
+    - "accuracy"
+    - "f1_score"  # Reduced metrics for speed
+    
+  # Cross-validation (disabled for speed)
+  cross_validation:
+    enabled: false
+    folds: 3
+    
+# Explainable AI configuration (limited for speed)
+explainable_ai:
+  enabled: true
+  methods:
+    - "feature_ablation"  # Only one method for quick testing
+    
+  # Feature importance analysis
+  feature_importance:
+    enabled: true
+    top_k_features: 10  # Fewer features to analyze
+    
+  # Visualization settings
+  visualization:
+    save_plots: true
+    plot_format: "png"
+    dpi: 150  # Lower DPI for faster saving
+
+# Logging configuration
+logging:
+  level: "INFO"
+  verbose: true # Added verbose key
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/quick_test.log"
+  
+# Output paths
+output:
+  models_dir: "models/quick_test"
+  results_dir: "results/quick_test" 
+  plots_dir: "plots/quick_test"
+  logs_dir: "logs"
+  
+# Reproducibility
+random_seed: 42
+deterministic: true
+
+# Hardware configuration
+device:
+  use_cuda: true
+  cuda_device: 0
+  num_workers: 0  # Changed to 0 to prevent hanging during quick tests

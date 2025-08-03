@@ -1,0 +1,121 @@
+# Default Configuration for MoMLNIDS Project
+
+project:
+  name: "MoMLNIDS_Default"
+  description: "Default configuration for Multi-Domain Network Intrusion Detection System"
+  version: "1.0.0"
+
+wandb:
+  enabled: False
+  project: "MoMLNIDS_Training"
+  entity: null # Replace with your W&B entity if applicable
+  tags: ["default"]
+
+model:
+  name: "MoMLDNIDS"
+  input_nodes: 39
+  single_layer: false
+  feature_extractor:
+    hidden_layers: [64, 32, 16, 10]
+    dropout_rate: 0.3
+    activation: "ELU"
+  classifier:
+    hidden_layers: [64, 32, 16]
+    num_classes: 2
+    dropout_rate: 0.25
+  discriminator:
+    hidden_layers: [64, 32, 16]
+    num_domains: 3 # Default, will be overridden by actual domain count
+    dropout_rate: 0.25
+
+training:
+  batch_size: 1
+  epochs: 20
+  learning_rate: 0.0015
+  weight_decay: 0.0005
+  domain_weight: 1.0 # Placeholder, will be calculated
+  classification_weight: 1.0 # Placeholder, will be calculated
+  target_index: 0
+  experiment_num: "|Default|"
+  use_cluster: false
+  eval_step: 1
+  save_step: 2
+  extractor_weight: 1.0
+  classifier_weight: 1.0
+  discriminator_weight: 1.0
+  amsgrad: false
+  t_max: 10
+  clustering_step: 1
+  label_smooth: 0.0
+  entropy_weight: 0.0
+  grl_weight: 1.0
+  eval_batch_frequency: 1
+  early_stopping:
+    enabled: False
+    patience: 5
+    min_delta: 0.001
+  checkpoint:
+    save_every: 2
+    save_best: True
+  gradient_clip_norm: 10000.0
+
+data:
+  datasets:
+    - "NF-UNSW-NB15-v2"
+    - "NF-CSE-CIC-IDS2018-v2"
+    - "NF-ToN-IoT-v2"
+    - "NF-BoT-IoT-v2" # Added BoT-IoT for completeness
+  raw_data_path: "./data/raw/NIDS_DATA/"
+  interim_data_path: "./data/interim/"
+  processed_data_path: "data/parquet" # This is the path to your parquet files
+  domain_reweighting: [1.0, 1.0, 1.0]
+  label_reweighting: [[1.0, 1.0], [1.0, 1.0], [1.0, 1.0]]
+  preprocessing:
+    normalize: True
+    handle_missing: True
+    feature_selection: False
+  data_splits:
+    train_ratio: 0.8
+    val_ratio: 0.1
+    test_ratio: 0.1
+  clustering:
+    method: "kmeans"
+    n_clusters: 4
+    random_state: 42
+
+evaluation:
+  metrics: ["accuracy", "f1_score", "precision", "recall", "auroc"]
+  cross_validation:
+    enabled: False
+    folds: 5
+
+explainable_ai:
+  enabled: False
+  methods: ["integrated_gradients", "feature_ablation"]
+  feature_importance:
+    enabled: True
+    top_k_features: 10
+  visualization:
+    save_plots: True
+    plot_format: "png"
+    dpi: 300
+
+logging:
+  level: "INFO"
+  verbose: true
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "training.log"
+
+output:
+  models_dir: "./models/"
+  results_dir: "./results/"
+  plots_dir: "./plots/"
+  logs_dir: "./logs/"
+
+random_seed: 42
+deterministic: True
+
+device:
+  use_cuda: True
+  cuda_device: 0
+  num_workers: 0 # Set to 0 for easier debugging, increase for performance

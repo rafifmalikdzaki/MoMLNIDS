@@ -1,0 +1,60 @@
+{
+  "config": {
+    "model_name": "MoMLNIDS",
+    "target_domain": "NF-ToN-IoT-v2",
+    "batch_size": 128,
+    "learning_rate": "N/A",
+    "epochs": "N/A",
+    "datasets": [
+      "NF-ToN-IoT-v2"
+    ],
+    "random_seed": 42,
+    "model_path": "ProperTraining/NF-CSE-CIC-IDS2018-v2/NF-CSE-CIC-IDS2018-v2_N|PseudoLabelling|Cluster_2/model_best.pt",
+    "evaluation_timestamp": "2025-07-14T14:39:04.083877",
+    "num_samples_evaluated": 50000,
+    "model_config": {
+      "input_nodes": 39,
+      "hidden_nodes": [
+        39,
+        64,
+        32,
+        16,
+        10
+      ],
+      "num_domains": 2,
+      "num_class": 2
+    }
+  },
+  "evaluation_results": {
+    "NF-ToN-IoT-v2": {
+      "metrics": {
+        "NF-ToN-IoT-v2_accuracy": 0.8088,
+        "NF-ToN-IoT-v2_precision": 0.7676,
+        "NF-ToN-IoT-v2_recall": 0.6387,
+        "NF-ToN-IoT-v2_f1_score": 0.6972,
+        "NF-ToN-IoT-v2_auc_roc": 0.8318
+      },
+      "predictions": "[0 0 0 ... 1 1 1]",
+      "probabilities": "[[0.59424454 0.40575543]\n [0.64962804 0.35037199]\n [0.64962804 0.35037199]\n ...\n [0.38643098 0.61356902]\n [0.40473714 0.59526283]\n [0.39996007 0.6000399 ]]",
+      "true_labels": "[0 0 0 ... 1 1 1]",
+      "confusion_matrix": {
+        "true_positive": 11008,
+        "true_negative": 29432,
+        "false_positive": 3332,
+        "false_negative": 6228
+      },
+      "confidence_analysis": {
+        "overall_avg": 0.6308,
+        "correct_predictions_avg": 0.632,
+        "incorrect_predictions_avg": 0.6257,
+        "min_confidence": 0.5001,
+        "max_confidence": 0.9155
+      }
+    }
+  },
+  "domain_generalization_info": {
+    "evaluation_type": "target_domain_evaluation",
+    "target_domain": "NF-ToN-IoT-v2",
+    "note": "This is domain generalization evaluation where model trained on source domains is tested on target domain"
+  }
+}

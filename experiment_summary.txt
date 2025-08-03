@@ -1,0 +1,28 @@
+MoMLNIDS Experiment Results Summary
+==================================================
+Generated on: 2025-07-13 22:19:08
+
+Results from: experiment_results.json
+------------------------------
+Configuration:
+  model_name: MoMLNIDS
+  batch_size: 128
+  learning_rate: 0.01
+  epochs: 10
+  datasets: NF-BoT-IoT-v2, NF-CSE-CIC-IDS2018-v2
+  random_seed: 42
+
+Performance Metrics:
+  NF-BoT-IoT-v2:
+    Accuracy: 0.4970
+    Precision: 0.4970
+    Recall: 0.4970
+    F1_Score: 0.4970
+    Auc_Roc: 0.4983
+  NF-CSE-CIC-IDS2018-v2:
+    Accuracy: 0.5010
+    Precision: 0.5010
+    Recall: 0.5010
+    F1_Score: 0.5010
+    Auc_Roc: 0.5156
+

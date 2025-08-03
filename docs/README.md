@@ -109,61 +109,11 @@ uv pip install -r requirements-gpu.txt  # if available
 pip install -r requirements.txt
 ```
 
-## 🚀 Scripts Overview & Usage
+## 🚀 Usage Examples
 
-### 📋 Main Training Scripts
+### 1. 🎯 Enhanced Training with MLOps
 
-| Script | Purpose | Usage | 
-|--------|---------|-------|
-| **`src/main_config.py`** | ✨ **Enhanced training with MLOps** - Configuration-driven training with W&B integration, explainable AI, and model versioning | `python src/main_config.py --config config/default_config.yaml` |
-| **`src/main_improved.py`** | Enhanced training with explainability features | `python src/main_improved.py --config config/experiment_config.yaml` |
-| **`src/main.py`** | Source-only baseline training (legacy) | `python src/main.py` |
-| **`src/main_pseudo.py`** | Pseudo-labeling clustering experiments | `python src/main_pseudo.py` |
-| **`src/main_pseudo_50.py`** | Extended 50-epoch pseudo-labeling training | `python src/main_pseudo_50.py` |
-
-### 🎮 Interactive Demo & TUI Scripts
-
-| Script | Purpose | Usage |
-|--------|---------|-------|
-| **`demo_sidang_enhanced.py`** | 🌟 **Enhanced CLI demo** - Beautiful interactive interface with Click & Rich, perfect for thesis defense | `python demo_sidang_enhanced.py test` |
-| **`momlnids_tui.py`** | Textual User Interface for training and evaluation | `python momlnids_tui.py` |
-| **`demo_tui.py`** | Simple TUI demo | `python demo_tui.py` |
-| **`launcher.py`** | Multi-purpose launcher script | `python launcher.py` |
-
-### 🔍 Model Evaluation Scripts
-
-| Script | Purpose | Usage |
-|--------|---------|-------|
-| **`interactive_evaluation.py`** | 🏆 **Primary evaluation interface** - Smart model discovery with clustering detection, auto-selection, enhanced filtering | `python interactive_evaluation.py` |
-| **`comprehensive_evaluation.py`** | Domain generalization analysis across all datasets | `python comprehensive_evaluation.py --model-path MODEL --num-samples 200` |
-| **`auto_prediction_demo.py`** | Real data evaluation with automatic dataset discovery | `python auto_prediction_demo.py --model-path MODEL --dataset DATASET` |
-| **`prediction_demo.py`** | Basic model prediction interface with synthetic/manual data | `python prediction_demo.py --model-path MODEL --mode demo` |
-| **`simple_model_eval.py`** | Simple model evaluation utility | `python simple_model_eval.py` |
-
-### 📊 Visualization & Analysis Scripts
-
-| Script | Purpose | Usage |
-|--------|---------|-------|
-| **`enhanced_results_visualizer.py`** | Advanced plotting and visualization tools | `python enhanced_results_visualizer.py --interactive` |
-| **`demo_enhanced_visualizer.py`** | Enhanced results visualizer demo | `python demo_enhanced_visualizer.py` |
-| **`demo_enhanced_granular.py`** | Granular visualization demo with detailed features | `python demo_enhanced_granular.py` |
-| **`demo_visualizer.py`** | Standard results visualization demo | `python demo_visualizer.py` |
-| **`momlnids_results_tui.py`** | TUI for results analysis | `python momlnids_results_tui.py` |
-| **`feature_summary.py`** | Feature analysis and summary | `python feature_summary.py` |
-
-### 🧪 Testing & Validation Scripts
-
-| Script | Purpose | Usage |
-|--------|---------|-------|
-| **`validate_project.py`** | Complete project validation | `python validate_project.py` |
-| **`src/tests/smoke_test.py`** | Comprehensive smoke testing | `python src/tests/smoke_test.py` |
-| **`src/tests/test_imports.py`** | Import validation testing | `python src/tests/test_imports.py` |
-| **`test_enhanced_demo.py`** | Enhanced demo testing | `python test_enhanced_demo.py` |
-| **`test_training_progress.py`** | Training progress testing | `python test_training_progress.py` |
-
-## 🎯 Quick Start Usage Examples
-
-### 1. 🌟 **Recommended: Enhanced Training with MLOps**
+Run the improved training script with full configuration management and experiment tracking:
 
 ```bash
 # Run with default configuration
@@ -182,40 +132,21 @@ python src/main_config.py --config config/quick_test_config.yaml
 - 💾 **Model Versioning**: Save best models with metadata
 - 🔧 **Reproducible Results**: Deterministic training with seed management
 
-### 2. 🎮 **Interactive Demo (Perfect for Thesis Defense)**
+### 2. 🔄 Legacy Training Methods
 
+#### Source-Only Baseline Training
 ```bash
-# Beautiful CLI demo with rich interface
-python demo_sidang_enhanced.py test
-
-# Interactive model evaluation
-python interactive_evaluation.py
-
-# Textual User Interface
-python momlnids_tui.py
+python src/main.py
 ```
 
-### 3. 🔍 **Model Evaluation Workflow**
-
+#### Pseudo-Label Clustering Sweep
 ```bash
-# Primary evaluation interface (RECOMMENDED)
-python interactive_evaluation.py
-
-# Auto-select best model for specific dataset
-python interactive_evaluation.py --auto-select "NF-CSE-CIC-IDS2018-v2"
-
-# Comprehensive domain generalization analysis
-python comprehensive_evaluation.py --model-path "ProperTraining/MODEL/model_best.pt" --num-samples 200
+python src/main_pseudo.py
 ```
 
-### 4. 📊 **Results Visualization**
-
+#### Extended Training (50 Epochs)
 ```bash
-# Enhanced interactive visualizer
-python enhanced_results_visualizer.py --interactive
-
-# Quick visualization demo
-python demo_enhanced_visualizer.py
+python src/main_pseudo_50.py  # Verify file exists
 ```
 
 ### 3. ⚙️ Configuration Management
@@ -494,31 +425,12 @@ test(model): add unit tests for feature extractor
 
 
 
-## 📚 Documentation
-
-For comprehensive documentation, guides, and tutorials, visit the [`documentation/`](./documentation/) directory:
-
-### 🎯 **Quick Start Guides**
-- [`documentation/TUI_README.md`](./documentation/TUI_README.md) - Interactive textual user interface
-- [`documentation/ENHANCED_DEMO_USAGE.md`](./documentation/ENHANCED_DEMO_USAGE.md) - Enhanced CLI demo script
-
-### 🔍 **Technical Documentation**
-- [`documentation/MAIN_FUNCTIONS_SUMMARY.md`](./documentation/MAIN_FUNCTIONS_SUMMARY.md) - Complete codebase overview
-- [`docs/ENHANCED_FEATURES.md`](./docs/ENHANCED_FEATURES.md) - Modern ML features and capabilities
-
-### 📊 **Visualization & Analysis**
-- [`documentation/ENHANCED_VISUALIZER_GUIDE.md`](./documentation/ENHANCED_VISUALIZER_GUIDE.md) - Advanced plotting tools
-- [`documentation/RESULTS_VISUALIZER_GUIDE.md`](./documentation/RESULTS_VISUALIZER_GUIDE.md) - Standard analysis
-
-### 📋 **Complete Documentation Index**
-- [`documentation/DOCUMENTATION_OVERVIEW.md`](./documentation/DOCUMENTATION_OVERVIEW.md) - **Meta-documentation** with navigation guide to all available documentation
-
 ## Contact Information
 
-- **Author**: Dzaki Rafif Malik
-- **Email**: malikdzaki16@gmail.com
-- **Research Group**: Intelligent Systems
-- **Institution**: Universitas Brawijaya
+- **Author**: [Your Name]
+- **Email**: [your.email@university.edu]
+- **Research Group**: [Research Group/Lab Name]
+- **Institution**: [University/Institution Name]
 
 For questions, issues, or collaboration opportunities, please contact the author or create an issue in the repository.
 

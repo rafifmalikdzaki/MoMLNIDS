@@ -1,0 +1,68 @@
+{
+  "evaluation_info": {
+    "evaluation_type": "comprehensive_domain_generalization",
+    "model_path": "ProperTraining/NF-CSE-CIC-IDS2018-v2/NF-CSE-CIC-IDS2018-v2_N|PseudoLabelling|Cluster_2/model_best.pt",
+    "model_target_domain": "NF-CSE-CIC-IDS2018-v2",
+    "evaluation_timestamp": "2025-07-13T23:50:47.601515",
+    "total_datasets_evaluated": 4,
+    "successful_evaluations": 4,
+    "failed_evaluations": 0
+  },
+  "summary_statistics": {
+    "mean_accuracy": 0.2639,
+    "std_accuracy": 0.13816254919478,
+    "mean_f1_score": 0.24372500000000002,
+    "std_f1_score": 0.19466809413717495,
+    "mean_auc_roc": NaN,
+    "std_auc_roc": NaN,
+    "best_performing_dataset": "NF-UNSW-NB15-v2",
+    "worst_performing_dataset": "NF-BoT-IoT-v2"
+  },
+  "individual_dataset_results": {
+    "NF-CSE-CIC-IDS2018-v2": {
+      "evaluation_type": "target_domain",
+      "accuracy": 0.2778,
+      "precision": 0.2778,
+      "recall": 1.0,
+      "f1_score": 0.4348,
+      "auc_roc": 0.5692,
+      "samples": 18
+    },
+    "NF-ToN-IoT-v2": {
+      "evaluation_type": "cross_domain",
+      "accuracy": 0.2778,
+      "precision": 0.8333,
+      "recall": 0.2941,
+      "f1_score": 0.4348,
+      "auc_roc": 0.2941,
+      "samples": 18
+    },
+    "NF-UNSW-NB15-v2": {
+      "evaluation_type": "cross_domain",
+      "accuracy": 0.4444,
+      "precision": 0.0,
+      "recall": 0,
+      "f1_score": 0,
+      "auc_roc": NaN,
+      "samples": 18
+    },
+    "NF-BoT-IoT-v2": {
+      "evaluation_type": "cross_domain",
+      "accuracy": 0.0556,
+      "precision": 1.0,
+      "recall": 0.0556,
+      "f1_score": 0.1053,
+      "auc_roc": NaN,
+      "samples": 18
+    }
+  },
+  "domain_generalization_analysis": {
+    "note": "This evaluation tests the model's ability to generalize across different network domains",
+    "target_domain": "NF-CSE-CIC-IDS2018-v2",
+    "cross_domain_datasets": [
+      "NF-ToN-IoT-v2",
+      "NF-UNSW-NB15-v2",
+      "NF-BoT-IoT-v2"
+    ]
+  }
+}

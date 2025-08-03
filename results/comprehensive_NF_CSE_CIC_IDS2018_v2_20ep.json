@@ -1,0 +1,72 @@
+{
+  "evaluation_info": {
+    "evaluation_type": "comprehensive_domain_generalization",
+    "model_path": "ProperTraining/NF-CSE-CIC-IDS2018-v2/NF-CSE-CIC-IDS2018-v2_N|PseudoLabelling|Cluster_2/model_best.pt",
+    "model_target_domain": "NF-CSE-CIC-IDS2018-v2",
+    "evaluation_timestamp": "2025-07-14T14:39:27.814727",
+    "total_datasets_evaluated": 4,
+    "successful_evaluations": 4,
+    "failed_evaluations": 0
+  },
+  "summary_statistics": {
+    "mean_accuracy": 0.34602499999999997,
+    "std_accuracy": 0.2941132126834835,
+    "mean_f1_score": 0.2628,
+    "std_f1_score": 0.2579846022537004,
+    "mean_auc_roc": 0.519225,
+    "std_auc_roc": 0.27932415197222027,
+    "best_performing_dataset": "NF-ToN-IoT-v2",
+    "worst_performing_dataset": "NF-BoT-IoT-v2"
+  },
+  "individual_dataset_results": {
+    "NF-CSE-CIC-IDS2018-v2": {
+      "evaluation_type": "target",
+      "accuracy": 0.1657,
+      "precision": 0.1217,
+      "recall": 0.9672,
+      "f1_score": 0.2162,
+      "auc_roc": 0.7017,
+      "samples": 50000
+    },
+    "NF-ToN-IoT-v2": {
+      "evaluation_type": "source",
+      "accuracy": 0.8088,
+      "precision": 0.7676,
+      "recall": 0.6387,
+      "f1_score": 0.6972,
+      "auc_roc": 0.8318,
+      "samples": 50000
+    },
+    "NF-UNSW-NB15-v2": {
+      "evaluation_type": "source",
+      "accuracy": 0.3772,
+      "precision": 0.0417,
+      "recall": 0.5586,
+      "f1_score": 0.0777,
+      "auc_roc": 0.4428,
+      "samples": 50000
+    },
+    "NF-BoT-IoT-v2": {
+      "evaluation_type": "target",
+      "accuracy": 0.0324,
+      "precision": 0.9331,
+      "recall": 0.0311,
+      "f1_score": 0.0601,
+      "auc_roc": 0.1006,
+      "samples": 50000
+    }
+  },
+  "domain_generalization_analysis": {
+    "note": "Multi-source training evaluation: model trained on source domains, evaluated on target domains",
+    "main_target_domain": "NF-CSE-CIC-IDS2018-v2",
+    "always_target_domain": "NF-BoT-IoT-v2",
+    "source_domains": [
+      "NF-ToN-IoT-v2",
+      "NF-UNSW-NB15-v2"
+    ],
+    "target_domains": [
+      "NF-CSE-CIC-IDS2018-v2",
+      "NF-BoT-IoT-v2"
+    ]
+  }
+}
