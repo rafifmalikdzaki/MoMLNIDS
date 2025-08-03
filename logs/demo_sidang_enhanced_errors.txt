@@ -1,9 +1,9 @@
---- 2025-07-14T09:52:29.065260 ---
+--- 2025-07-14T14:41:58.453377 ---
 ERROR: Command failed: Running quick training
 DETAILS:
   Command: python src/main_config.py --config config/quick_demo_config.yaml
   Output:
-  📁 Experiment Directory: Training_Sessions/ProperTraining_1Epochs_20250714_0952/NF-CSE-CIC-IDS2018-v2/|Demo|
+  📁 Experiment Directory: Training_Sessions/ProperTraining_1Epochs_20250714_1441/NF-CSE-CIC-IDS2018-v2/|Demo|
   📂 Log Files: ['source_trained', 'val_performance', 'target_performance', 'clustering', 'training', 'final_val', 'final_target']
   Using device: cuda
   ================================================================================
@@ -17,8 +17,8 @@ DETAILS:
   ⚡ Learning Rate: 0.001
   🧠 Model: Single Layer=True, Input Nodes=39
   🔄 Use Clustering: False
-  💾 Models Dir: Training_Sessions/ProperTraining_1Epochs_20250714_0952/NF-CSE-CIC-IDS2018-v2/|Demo|
-  📝 Logs Dir: Training_Sessions/ProperTraining_1Epochs_20250714_0952/NF-CSE-CIC-IDS2018-v2/|Demo|
+  💾 Models Dir: Training_Sessions/ProperTraining_1Epochs_20250714_1441/NF-CSE-CIC-IDS2018-v2/|Demo|
+  📝 Logs Dir: Training_Sessions/ProperTraining_1Epochs_20250714_1441/NF-CSE-CIC-IDS2018-v2/|Demo|
   ================================================================================
   📂 Loading data from: ./data/parquet/
   ✅ Data path exists: data/parquet
@@ -32,18 +32,18 @@ DETAILS:
   Data directories: ['NF-ToN-IoT-v2', 'NF-UNSW-NB15-v2']
   
   Loading NF-ToN-IoT-v2:   0%|          | 0/169 [00:00<?, ?it/s]
-  Loading NF-ToN-IoT-v2:  24%|██▍       | 41/169 [00:00<00:00, 408.37it/s]
-  Loading NF-ToN-IoT-v2:  67%|██████▋   | 113/169 [00:00<00:00, 591.32it/s]
-  Loading NF-ToN-IoT-v2: 100%|██████████| 169/169 [00:00<00:00, 671.77it/s]
+  Loading NF-ToN-IoT-v2:  34%|███▎      | 57/169 [00:00<00:00, 566.54it/s]
+  Loading NF-ToN-IoT-v2:  79%|███████▊  | 133/169 [00:00<00:00, 676.64it/s]
+  Loading NF-ToN-IoT-v2: 100%|██████████| 169/169 [00:00<00:00, 705.00it/s]
   
   Loading NF-UNSW-NB15-v2:   0%|          | 0/23 [00:00<?, ?it/s]
-  Loading NF-UNSW-NB15-v2: 100%|██████████| 23/23 [00:00<00:00, 942.47it/s]
+  Loading NF-UNSW-NB15-v2: 100%|██████████| 23/23 [00:00<00:00, 983.02it/s]
   Data directories: ['NF-CSE-CIC-IDS2018-v2']
   
   Loading NF-CSE-CIC-IDS2018-v2:   0%|          | 0/187 [00:00<?, ?it/s]
-  Loading NF-CSE-CIC-IDS2018-v2:  47%|████▋     | 88/187 [00:00<00:00, 871.28it/s]
-  Loading NF-CSE-CIC-IDS2018-v2:  96%|█████████▌| 179/187 [00:00<00:00, 893.82it/s]
-  Loading NF-CSE-CIC-IDS2018-v2: 100%|██████████| 187/187 [00:00<00:00, 892.58it/s]
+  Loading NF-CSE-CIC-IDS2018-v2:  44%|████▍     | 83/187 [00:00<00:00, 823.25it/s]
+  Loading NF-CSE-CIC-IDS2018-v2:  89%|████████▉ | 167/187 [00:00<00:00, 828.46it/s]
+  Loading NF-CSE-CIC-IDS2018-v2: 100%|██████████| 187/187 [00:00<00:00, 836.96it/s]
   Train: 154, Val: 38, Test: 187
   ✅ Successfully loaded real datasets!
   🚂 Train batches: 39
@@ -52,8 +52,8 @@ DETAILS:
   📊 Data shape: torch.Size([4, 100000, 39])
   🏷️  Labels shape: torch.Size([4, 100000])
   🌐 Domains shape: torch.Size([4, 100000])
-  📈 Label distribution: tensor([211738, 188262])
-  🗺️  Domain distribution: tensor([300000, 100000])
+  📈 Label distribution: tensor([170098, 229902])
+  🗺️  Domain distribution: tensor([400000])
   
   🧠 Initializing model...
   ✅ Model initialized successfully!
@@ -136,13 +136,13 @@ DETAILS:
   ╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯Error during training: running_mean should contain 100000 elements not 39
   
   -------------------------------------------------------------------------------
-  main_config.py 562 <module>
+  main_config.py 618 <module>
   main()
   
   main_config.py 417 main
   model, optimizers, train_metrics = train(
   
-  TrainEval.py 1132 train
+  TrainEval.py 1133 train
   output_class, output_domain = model(data)
   
   module.py 1751 _wrapped_call_impl
@@ -178,11 +178,11 @@ DETAILS:
   RuntimeError:
   running_mean should contain 100000 elements not 39
 
---- 2025-07-14T09:52:29.071217 ---
+--- 2025-07-14T14:41:58.455819 ---
 ERROR: Quick training failed
 DETAILS:
   Output:
-  📁 Experiment Directory: Training_Sessions/ProperTraining_1Epochs_20250714_0952/NF-CSE-CIC-IDS2018-v2/|Demo|
+  📁 Experiment Directory: Training_Sessions/ProperTraining_1Epochs_20250714_1441/NF-CSE-CIC-IDS2018-v2/|Demo|
   📂 Log Files: ['source_trained', 'val_performance', 'target_performance', 'clustering', 'training', 'final_val', 'final_target']
   Using device: cuda
   ================================================================================
@@ -196,8 +196,8 @@ DETAILS:
   ⚡ Learning Rate: 0.001
   🧠 Model: Single Layer=True, Input Nodes=39
   🔄 Use Clustering: False
-  💾 Models Dir: Training_Sessions/ProperTraining_1Epochs_20250714_0952/NF-CSE-CIC-IDS2018-v2/|Demo|
-  📝 Logs Dir: Training_Sessions/ProperTraining_1Epochs_20250714_0952/NF-CSE-CIC-IDS2018-v2/|Demo|
+  💾 Models Dir: Training_Sessions/ProperTraining_1Epochs_20250714_1441/NF-CSE-CIC-IDS2018-v2/|Demo|
+  📝 Logs Dir: Training_Sessions/ProperTraining_1Epochs_20250714_1441/NF-CSE-CIC-IDS2018-v2/|Demo|
   ================================================================================
   📂 Loading data from: ./data/parquet/
   ✅ Data path exists: data/parquet
@@ -211,18 +211,18 @@ DETAILS:
   Data directories: ['NF-ToN-IoT-v2', 'NF-UNSW-NB15-v2']
   
   Loading NF-ToN-IoT-v2:   0%|          | 0/169 [00:00<?, ?it/s]
-  Loading NF-ToN-IoT-v2:  24%|██▍       | 41/169 [00:00<00:00, 408.37it/s]
-  Loading NF-ToN-IoT-v2:  67%|██████▋   | 113/169 [00:00<00:00, 591.32it/s]
-  Loading NF-ToN-IoT-v2: 100%|██████████| 169/169 [00:00<00:00, 671.77it/s]
+  Loading NF-ToN-IoT-v2:  34%|███▎      | 57/169 [00:00<00:00, 566.54it/s]
+  Loading NF-ToN-IoT-v2:  79%|███████▊  | 133/169 [00:00<00:00, 676.64it/s]
+  Loading NF-ToN-IoT-v2: 100%|██████████| 169/169 [00:00<00:00, 705.00it/s]
   
   Loading NF-UNSW-NB15-v2:   0%|          | 0/23 [00:00<?, ?it/s]
-  Loading NF-UNSW-NB15-v2: 100%|██████████| 23/23 [00:00<00:00, 942.47it/s]
+  Loading NF-UNSW-NB15-v2: 100%|██████████| 23/23 [00:00<00:00, 983.02it/s]
   Data directories: ['NF-CSE-CIC-IDS2018-v2']
   
   Loading NF-CSE-CIC-IDS2018-v2:   0%|          | 0/187 [00:00<?, ?it/s]
-  Loading NF-CSE-CIC-IDS2018-v2:  47%|████▋     | 88/187 [00:00<00:00, 871.28it/s]
-  Loading NF-CSE-CIC-IDS2018-v2:  96%|█████████▌| 179/187 [00:00<00:00, 893.82it/s]
-  Loading NF-CSE-CIC-IDS2018-v2: 100%|██████████| 187/187 [00:00<00:00, 892.58it/s]
+  Loading NF-CSE-CIC-IDS2018-v2:  44%|████▍     | 83/187 [00:00<00:00, 823.25it/s]
+  Loading NF-CSE-CIC-IDS2018-v2:  89%|████████▉ | 167/187 [00:00<00:00, 828.46it/s]
+  Loading NF-CSE-CIC-IDS2018-v2: 100%|██████████| 187/187 [00:00<00:00, 836.96it/s]
   Train: 154, Val: 38, Test: 187
   ✅ Successfully loaded real datasets!
   🚂 Train batches: 39
@@ -231,8 +231,8 @@ DETAILS:
   📊 Data shape: torch.Size([4, 100000, 39])
   🏷️  Labels shape: torch.Size([4, 100000])
   🌐 Domains shape: torch.Size([4, 100000])
-  📈 Label distribution: tensor([211738, 188262])
-  🗺️  Domain distribution: tensor([300000, 100000])
+  📈 Label distribution: tensor([170098, 229902])
+  🗺️  Domain distribution: tensor([400000])
   
   🧠 Initializing model...
   ✅ Model initialized successfully!
@@ -315,13 +315,13 @@ DETAILS:
   ╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯Error during training: running_mean should contain 100000 elements not 39
   
   -------------------------------------------------------------------------------
-  main_config.py 562 <module>
+  main_config.py 618 <module>
   main()
   
   main_config.py 417 main
   model, optimizers, train_metrics = train(
   
-  TrainEval.py 1132 train
+  TrainEval.py 1133 train
   output_class, output_domain = model(data)
   
   module.py 1751 _wrapped_call_impl

@@ -174,7 +174,7 @@ ProperTraining/
 ProperTraining50Epoch/
 Training_results/
 **/Training_Sessions/*
-results/
+**/results/
 *.pt
 *.pth
 *.zip

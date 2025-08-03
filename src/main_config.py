@@ -245,12 +245,12 @@ def main():
                     source_train, source_val, target_test = random_split_dataloader(
                         dir_path=str(datapath),
                         source_dir=source_domains,
-                        target_dir=[target_domain_name],
+                        target_dir=target_domain_name,
                         source_domain=list(range(len(source_domains))),
                         target_domain=[
                             len(source_domains)
                         ],  # Target domain gets next index
-                        get_domain=True,
+                        get_domain=not USE_CLUSTER,
                         get_cluster=USE_CLUSTER,
                         batch_size=BATCH_SIZE,
                         n_workers=NUM_WORKERS,

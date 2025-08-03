@@ -10,7 +10,7 @@
     ],
     "random_seed": 42,
     "model_path": "ProperTraining/NF-CSE-CIC-IDS2018-v2/NF-CSE-CIC-IDS2018-v2_N|PseudoLabelling|Cluster_2/model_best.pt",
-    "evaluation_timestamp": "2025-07-14T01:05:14.942566",
+    "evaluation_timestamp": "2025-07-14T14:39:15.491714",
     "num_samples_evaluated": 50000,
     "model_config": {
       "input_nodes": 39,
@@ -28,24 +28,24 @@
   "evaluation_results": {
     "NF-UNSW-NB15-v2": {
       "metrics": {
-        "NF-UNSW-NB15-v2_accuracy": 0.3886,
-        "NF-UNSW-NB15-v2_precision": 0.0367,
-        "NF-UNSW-NB15-v2_recall": 0.6962,
-        "NF-UNSW-NB15-v2_f1_score": 0.0697,
-        "NF-UNSW-NB15-v2_auc_roc": 0.5207
+        "NF-UNSW-NB15-v2_accuracy": 0.3772,
+        "NF-UNSW-NB15-v2_precision": 0.0417,
+        "NF-UNSW-NB15-v2_recall": 0.5586,
+        "NF-UNSW-NB15-v2_f1_score": 0.0777,
+        "NF-UNSW-NB15-v2_auc_roc": 0.4428
       },
-      "predictions": "[1 1 1 ... 1 1 1]",
-      "probabilities": "[[0.44751027 0.55248976]\n [0.48359779 0.51640224]\n [0.48359779 0.51640224]\n ...\n [0.44646391 0.55353606]\n [0.42696974 0.57303023]\n [0.39294919 0.60705078]]",
+      "predictions": "[1 0 1 ... 1 0 0]",
+      "probabilities": "[[0.45681813 0.54318184]\n [0.54987377 0.4501262 ]\n [0.41213429 0.58786571]\n ...\n [0.47301966 0.52698034]\n [0.5138039  0.48619607]\n [0.70749003 0.29251   ]]",
       "true_labels": "[0 0 0 ... 0 0 0]",
       "confusion_matrix": {
-        "true_positive": 1146,
-        "true_negative": 18282,
-        "false_positive": 30072,
-        "false_negative": 500
+        "true_positive": 1311,
+        "true_negative": 17549,
+        "false_positive": 30104,
+        "false_negative": 1036
       },
       "confidence_analysis": {
-        "overall_avg": 0.557,
-        "correct_predictions_avg": 0.55,
+        "overall_avg": 0.5579,
+        "correct_predictions_avg": 0.5522,
         "incorrect_predictions_avg": 0.5614,
         "min_confidence": 0.5,
         "max_confidence": 1.0

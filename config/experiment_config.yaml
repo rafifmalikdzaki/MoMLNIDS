@@ -51,7 +51,7 @@ training:
 
 # Data configuration (optional, will override default)
 data:
-  processed_data_path: "data/parquet" # Ensure this is correct
+  processed_data_path: "./data/parquet/" # Ensure this is correct
   domain_reweighting: [1.0, 1.0, 1.0]
   label_reweighting: [[1.0, 1.0], [1.0, 1.0], [1.0, 1.0]]
   clustering:
